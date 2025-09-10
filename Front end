@@ -1,0 +1,58 @@
+<!-- Front End Code -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mini EMR Dashboard</title>
+<!-- Link to external CSS -->
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="sidebar">
+<h2>EMR</h2>
+<a href="#">Patients</a>
+<a href="#">Appointments</a>
+<a href="#">Prescriptions</a>
+<a href="#">Lab Results</a>
+<a href="#">Settings</a>
+</div>
+
+<div class="main">
+<div class="header">
+<h2>Dr. John Smith</h2>
+    <button>Logout</button>
+    </div>
+
+    <div class="content">
+    <div class="patient-info">
+        <h3>Patient Summary</h3>
+        <p><strong>Name:</strong> Jane Doe</p>
+        <p><strong>Age:</strong> 45</p>
+        <p><strong>ID:</strong> #123456</p>
+        
+        <h3>Vitals</h3>
+        <div class="vitals">
+        <div><strong>BP:</strong> 120/80</div>
+        <div><strong>HR:</strong> 75 bpm</div>
+        <div><strong>Temp:</strong> 98.6°F</div>
+        <div><strong>SpO2:</strong> 98%</div>
+        </div>
+
+        <h3>Notes</h3>
+        <p>Patient reports mild chest pain. ECG ordered. Continue current medications.</p>
+    </div>
+
+    <div class="side-panel">
+        <h3>Quick Actions</h3>
+        <ul>
+        <li><a href="#">Add Note</a></li>
+        <li><a href="#">Order Lab Test</a></li>
+        <li><a href="#">New Prescription</a></li>
+        <li><a href="#">Schedule Follow-up</a></li>
+        </ul>
+    </div>
+    </div>
+</div>
+</body>
+</html>
