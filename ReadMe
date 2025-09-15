@@ -6,3 +6,10 @@
 6. Front end is using HTML and CSS
 7. Backend is using Python, MAMP stack,PHP (server side), phpAdmin (managing SQL database
 8. For the database we are going MySQL
+9. We divided our task into what people wanted to do and strenghts
+10. We have one main person working on our front end
+11. We have one main person working on our Backend
+12. We have one person working on the data base that will help with front and backend coding to not have just one side drowing
+13. For the data base we created people by randomly doing it
+      for the people we have lastName, firstName, DOB, Gender, height, weight, allergies and Phone #
+          so far for this we have 34 people that we have randomly created. For the phone # we typed 10 numbers so hopefully we don't have an actual phone number
