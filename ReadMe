@@ -13,3 +13,12 @@
 13. For the data base we created people by randomly doing it
       for the people we have lastName, firstName, DOB, Gender, height, weight, allergies and Phone #
           so far for this we have 34 people that we have randomly created. For the phone # we typed 10 numbers so hopefully we don't have an actual phone number
+14. Very import to do these installs for the backend or it will not work
+      open Visual Studio code and make a file called backend.py
+            than go to the terminal 
+                  then you want to install python3 -m pip install pydantic fastapi uvicorn
+                              after you did that and pip didn't work on the backend typing part do this install in ther termianl python3 -m pip --version
+                        then uvicorn backend:app --reload
+      and it will work how you want it to
+
+
