@@ -1,3 +1,4 @@
+    <!-- This is what the doctor sees -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,28 +10,28 @@
 <body>
 <div class="sidebar">
     <!-- Logo displayed at the top of the sidebar -->
-    <img src="Mini-EMR/Logo-For-Mini-EMR.png" alt="Mini EMR Logo" />
-
+    <img src="LogoForMiniEMR.png" alt="Mini EMR Logo" style="max-width: 100%; height: auto;" />
     <a href="#">Patients</a>
     <a href="#">Appointments</a>
     <a href="#">Prescriptions</a>
     <a href="#">Lab Results</a>
-    <a href="#">Settings</a>
+    <!-- Add settings if there is time-->
 </div>
-
+<!-- Top of the screen  Welcomes the Dr-->
 <div class="main">
     <div class="header">
-        <h2>Dr. Smith</h2>
+        <h2>Welcome, <span id="doctor-name"></span></h2>
         <button>Logout</button>
     </div>
 
     <div class="content">
+    <!-- middle content area with the patient summary-->
         <div class="patient-info">
         <h3>Patient Summary</h3>
-        <p><strong>Name:</strong> Patient name</p>
-        <p><strong>Age:</strong> 25</p>
+        <p><strong>Name:</strong> <span id="patient-name"></span></p>
+        <p><strong>Age:</strong> <span id="patient-age"></span></p>
         <p><strong>ID:</strong> #123456</p>
-
+<!-- Vital section that is in the middle column-->
         <h3>Vitals</h3>
         <div class="vitals">
         <div><strong>BP:</strong> 120/80</div>
@@ -38,11 +39,11 @@
         <div><strong>Temp:</strong> 98.6°F</div>
         <div><strong>Respiratory Rate:</strong> 18</div>
         </div>
-
+<!-- Notes from the doctors visit-->
         <h3>Notes</h3>
         <p>Patient reports mild chest pain. ECG ordered. Continue current medications.</p>
         </div>
-
+<!-- Side panel on the right hand side with quick things the doctor would need typically -->
         <div class="side-panel">
         <h3>Quick Actions</h3>
         <ul>
