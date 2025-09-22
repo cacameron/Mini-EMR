@@ -1,3 +1,4 @@
+/*Doctor view of what it would look like*/
 body {
 margin: 0;
 font-family: Arial, sans-serif;
@@ -9,7 +10,7 @@ background-color: #f5f6fa;
 /* Sidebar */
 .sidebar {
 width: 220px;
-background-color: #2c3e50;
+background-color: #0073cf;
 color: white;
 display: flex;
 flex-direction: column;
@@ -30,7 +31,16 @@ border-radius: 6px;
 display: block;
 }
 .sidebar a:hover {
-background-color: #34495e;
+background-color: white;
+color: #0073cf;
+}
+
+/* ✅ Logo inside sidebar */
+.sidebar img {
+  width: 150px;          /* adjust size as needed */
+max-width: 100%;
+display: block;
+  margin: 0 auto 20px;   /* center horizontally and add space below */
 }
 
 /* Main layout */
@@ -42,7 +52,7 @@ flex-direction: column;
 
 /* Header */
 .header {
-background-color: #3498db;
+background-color: #1338BE;
 color: white;
 padding: 15px;
 display: flex;
@@ -60,18 +70,31 @@ gap: 20px;
 
 .patient-info {
 flex: 2;
-background: white;
+background: #1338BE;
+color: white;
 padding: 20px;
 border-radius: 10px;
 box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
+/* Quick action */
 .side-panel {
 flex: 1;
-background: white;
+background: #1338BE;
+color: white;
 padding: 20px;
 border-radius: 10px;
 box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* edits the color for the links */
+.side-panel a {
+color: white;             
+text-decoration: none;    
+}
+.side-panel a:hover {
+color: #ffcc00;           
+text-decoration: underline;
 }
 
 h3 {
@@ -83,9 +106,9 @@ display: grid;
 grid-template-columns: repeat(2, 1fr);
 gap: 10px;
 }
-
 .vitals div {
-background: #ecf0f1;
+background: white;
+color: #1338BE;
 padding: 10px;
 border-radius: 6px;
 text-align: center;
@@ -93,13 +116,12 @@ text-align: center;
 
 button {
 padding: 8px 14px;
-background: #e74c3c;
+background: #ff0000;
 border: none;
 color: white;
 border-radius: 6px;
 cursor: pointer;
 }
-
 button:hover {
-background: #c0392b;
+background: #ff0000;
 }
