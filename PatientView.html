@@ -19,4 +19,41 @@
     <a href="#">Lab Results</a>
 <!-- Add settings if there is time-->
 </div>
-
+<!-- Top of the screen -->
+<!-- make it to where it takes the patient login and displays there name -->
+<div class="main">
+    <div class="header">
+        <h2>Welcome, <span id="patient-name"></span> </span></h2>
+        <button>Logout</button>
+    </div>
+    <!-- middle content area with the health summary-->
+    <div class="content">
+        <div class="patient-info">
+        <h3>My Health Summary</h3>
+        <p><strong>Name:</strong> <span id="patient-name"></span></p>
+        <p><strong>Age:</strong> <span id="patient-age"></span> </p>
+        <p><strong>ID:</strong> #123456</p>
+<!-- Vital section that is in the middle column-->
+        <h3>My Vitals</h3>
+        <div class="vitals">
+        <div><strong>BP:</strong> <span id="patient-bp"></span></div>
+        <div><strong>HR:</strong> <span id="patient-hr"></span></div>
+        <div><strong>Temp:</strong> <span id="patient-temp"></span></div>
+        <div><strong>Respiratory Rate:</strong> <span id="patient-respiratory-rate"></span></div>
+        </div>
+<!-- Notes section that is in the middle column from the doctor-->
+        <h3>My Notes</h3>
+        <p>Your doctor has noted: <span id="doctor-notes"></span></p>
+        </div>
+<!-- Side panel on the right hand side with quick actions-->
+        <div class="side-panel">
+        <h3>Quick Actions</h3>
+        <ul>
+        <!-- Typical links that the user would need -->
+        <li><a href="#">Request Appointment</a></li>
+        <li><a href="#">Request Prescription Refill</a></li>
+        <li><a href="#">View Lab Results</a></li>
+        <li><a href="#">Update Personal Info</a></li>
+        </ul>
+        </div>
+    </div>
