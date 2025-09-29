@@ -1,4 +1,3 @@
-    <!-- This is what the doctor sees -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,13 +10,13 @@
 <div class="sidebar">
     <!-- Logo displayed at the top of the sidebar -->
     <img src="LogoForMiniEMR.png" alt="Mini EMR Logo" style="max-width: 100%; height: auto;" />
-    <a href="#">Patients</a>
-    <a href="#">Appointments</a>
-    <a href="#">Prescriptions</a>
-    <a href="#">Lab Results</a>
-    <!-- Add settings if there is time-->
+    <a href="#" id="patients-link">Patients</a>
+    <a href="#" id="appointments-link">Appointments</a>
+    <a href="#" id="prescriptions-link">Prescriptions</a>
+    <a href="#" id="labs-link">Lab Results</a>
 </div>
-<!-- Top of the screen  Welcomes the Dr-->
+
+<!-- Top of the screen -->
 <div class="main">
     <div class="header">
         <h2>Welcome, <span id="doctor-name"></span></h2>
@@ -25,36 +24,92 @@
     </div>
 
     <div class="content">
-    <!-- middle content area with the patient summary-->
-        <div class="patient-info">
-        <h3>Patient Summary</h3>
-        <p><strong>Name:</strong> <span id="patient-name"></span></p>
-        <p><strong>Age:</strong> <span id="patient-age"></span></p>
-        <p><strong>ID:</strong> #123456</p>
-<!-- Vital section that is in the middle column-->
-        <h3>Vitals</h3>
-        <div class="vitals">
-        <div><strong>BP:</strong> 120/80</div>
-        <div><strong>HR:</strong> 75 bpm</div>
-        <div><strong>Temp:</strong> 98.6°F</div>
-        <div><strong>Respiratory Rate:</strong> 18</div>
-        </div>
-<!-- Notes from the doctors visit-->
-        <h3>Notes</h3>
-        <p>Patient reports mild chest pain. ECG ordered. Continue current medications.</p>
-        </div>
-<!-- Side panel on the right hand side with quick things the doctor would need typically -->
-        <div class="side-panel">
-        <h3>Quick Actions</h3>
-        <ul>
-        <li><a href="#">Add Note</a></li>
-        <li><a href="#">Order Lab Test</a></li>
-        <li><a href="#">New Prescription</a></li>
-        <li><a href="#">Schedule Follow-up</a></li>
-        <li><a href="#">Cancel Current Appointments</a></li>
-        </ul>
-        </div>
+        <!-- This section will update dynamically with JS -->
     </div>
 </div>
+
+<!-- JavaScript to fetch from backend -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Load patient info
+function loadPatient() {
+    fetch("http://127.0.0.1:5000/api/patient")
+    .then(res => res.json())
+    .then(data => {
+        const content = document.querySelector(".content");
+        content.innerHTML = `
+        <div class="patient-info">
+            <h3>Patient Summary</h3>
+            <p><strong>Name:</strong> ${data.patient_name}</p>
+            <p><strong>Age:</strong> ${data.patient_age}</p>
+            <p><strong>ID:</strong> ${data.patient_id}</p>
+            <h3>Vitals</h3>
+            <div>
+            <div><strong>BP:</strong> ${data.vitals.bp}</div>
+            <div><strong>HR:</strong> ${data.vitals.hr}</div>
+            <div><strong>Temp:</strong> ${data.vitals.temp}</div>
+            <div><strong>Respiratory Rate:</strong> ${data.vitals.rr}</div>
+            </div>
+            <h3>Notes</h3>
+            <p>${data.notes}</p>
+        </div>
+        `;
+        document.getElementById("doctor-name").textContent = data.doctor_name;
+    })
+    .catch(err => console.error("Error loading patient:", err));
+}
+
+  // Load appointments
+function loadAppointments() {
+    fetch("http://127.0.0.1:5000/api/appointments")
+    .then(res => res.json())
+    .then(data => {
+        document.querySelector(".content").innerHTML =
+        "<h3>Appointments</h3><ul>" +
+        data.appointments.map(a =>
+            `<li>${a.date} at ${a.time} — ${a.reason}</li>`
+        ).join("") + "</ul>";
+    })
+    .catch(err => console.error("Error loading appointments:", err));
+}
+
+  // Load prescriptions
+function loadPrescriptions() {
+    fetch("http://127.0.0.1:5000/api/prescriptions")
+    .then(res => res.json())
+    .then(data => {
+        document.querySelector(".content").innerHTML =
+        "<h3>Prescriptions</h3><ul>" +
+        data.prescriptions.map(p =>
+            `<li>${p.drug} — ${p.dosage}, ${p.frequency}</li>`
+        ).join("") + "</ul>";
+    })
+    .catch(err => console.error("Error loading prescriptions:", err));
+}
+
+  // Load labs
+function loadLabs() {
+    fetch("http://127.0.0.1:5000/api/labs")
+    .then(res => res.json())
+    .then(data => {
+        document.querySelector(".content").innerHTML =
+        "<h3>Lab Results</h3><ul>" +
+        data.labs.map(l =>
+            `<li>${l.test} (${l.date}) — ${l.result}</li>`
+        ).join("") + "</ul>";
+    })
+    .catch(err => console.error("Error loading labs:", err));
+}
+
+  // Attach events to sidebar links
+document.getElementById("patients-link").addEventListener("click", e => { e.preventDefault(); loadPatient(); });
+document.getElementById("appointments-link").addEventListener("click", e => { e.preventDefault(); loadAppointments(); });
+document.getElementById("prescriptions-link").addEventListener("click", e => { e.preventDefault(); loadPrescriptions(); });
+document.getElementById("labs-link").addEventListener("click", e => { e.preventDefault(); loadLabs(); });
+
+  // Load patient summary first
+loadPatient();
+});
+</script>
 </body>
 </html>
