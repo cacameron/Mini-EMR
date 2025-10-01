@@ -1,66 +1,84 @@
+<!-- Front End Doctor Screen -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mini EMR – Login</title>
+<title>Mini EMR – Front End</title>
 <link rel="stylesheet" href="style.css" />
 </head>
-<body style="background:#ecf0f1;display:flex;justify-content:center;align-items:center;height:100vh;">
-<div class="login-box" style="background:white;padding:2rem;border-radius:8px;
-    box-shadow:0 0 10px rgba(0,0,0,.1);width:300px;">
-    <h2 style="text-align:center;">Mini EMR Login</h2>
-    <input id="login-user" placeholder="Username"
-        style="width:100%;margin:.5rem 0;padding:.4rem;"><br>
-    <input id="login-pass" type="password" placeholder="Password"
-        style="width:100%;margin:.5rem 0;padding:.4rem;"><br>
-    <button id="login-btn" style="width:100%;margin:.5rem 0;">Login</button>
-    <button id="register-btn" style="width:100%;margin:.5rem 0;">Register</button>
-    <p id="login-msg" style="color:red;text-align:center;"></p>
+<body>
+<div class="sidebar">
+    <!-- Logo displayed at the top of the sidebar -->
+    <img src="LogoForMiniEMR.png" alt="Mini EMR Logo" style="max-width: 100%; height: auto;" />
+    <a href="#">Patients</a>
+    <a href="#">Appointments</a>
+    <a href="#">Prescriptions</a>
+    <a href="#">Lab Results</a>
+</div>
+
+<!-- Main doctor screen -->
+<div class="main">
+    <div class="header">
+    <h2>Welcome, <span id="doctor-name"></span></h2>
+    <button id="logoutBtn">Logout</button>
+    </div>
+
+    <div class="content">
+    <!-- Patient summary -->
+    <div class="patient-info">
+        <h3>Patient Summary</h3>
+        <p><strong>Name:</strong> <span id="patient-name">John Doe</span></p>
+        <p><strong>Age:</strong> <span id="patient-age">45</span></p>
+        <p><strong>ID:</strong> #123456</p>
+
+        <!-- Vitals -->
+        <h3>Vitals</h3>
+        <div class="vitals">
+        <div><strong>BP:</strong> 120/80</div>
+        <div><strong>HR:</strong> 75 bpm</div>
+        <div><strong>Temp:</strong> 98.6°F</div>
+        <div><strong>Respiratory Rate:</strong> 18</div>
+        </div>
+
+        <!-- Notes -->
+        <h3>Notes</h3>
+        <p>Patient reports mild chest pain. ECG ordered. Continue current medications.</p>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="side-panel">
+        <h3>Quick Actions</h3>
+        <ul>
+        <li><a href="#">Add Note</a></li>
+        <li><a href="#">Order Lab Test</a></li>
+        <li><a href="#">New Prescription</a></li>
+        <li><a href="#">Schedule Follow-up</a></li>
+        <li><a href="#">Cancel Current Appointments</a></li>
+        </ul>
+    </div>
+    </div>
 </div>
 
 <script>
-const API = "http://127.0.0.1:5000/api";
+    document.addEventListener("DOMContentLoaded", function () {
+      // Get doctor name from login
+    const doctorName = localStorage.getItem("doctorName");
 
-// LOGIN
-document.getElementById("login-btn").onclick = () => {
-fetch(`${API}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-    body: JSON.stringify({
-    username: document.getElementById("login-user").value,
-    password: document.getElementById("login-pass").value
-    })
-})
-.then(r => r.json())
-.then(res => {
-    if (res.username) {
-      // ✅ move to the records screen
-    window.location.href = "records.html";
+    if (!doctorName) {
+        // Not logged in → back to login
+        window.location.href = "login.html";
     } else {
-    document.getElementById("login-msg").textContent =
-        res.error || "Login failed";
+        // Show doctor name on header
+        document.getElementById("doctor-name").textContent = doctorName;
     }
-});
-};
 
-// REGISTER
-document.getElementById("register-btn").onclick = () => {
-fetch(`${API}/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-    username: document.getElementById("login-user").value,
-    password: document.getElementById("login-pass").value
-    })
-})
-.then(r => r.json())
-.then(res => {
-    document.getElementById("login-msg").textContent =
-    res.message || res.error || "";
-});
-};
+      // Logout clears login info and returns to login
+    document.getElementById("logoutBtn").addEventListener("click", function () {
+        localStorage.removeItem("doctorName");
+        window.location.href = "login.html";
+    });
+    });
 </script>
 </body>
 </html>
