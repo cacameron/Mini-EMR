@@ -17,6 +17,7 @@
       We created our own accounts
       Than made a cluster on mongodb and invited everyone to our cluster that is in our group
 How to connect Mongodb to Visusal Studio Code: 
-      
+      We created a viritual enviroment in Visual studio, then on the .env file we added the mongodb link:
+            
 
 
