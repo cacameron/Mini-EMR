@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mini EMR – Doctor View</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="sidebar">
+    <img src="LogoForMiniEMR.png" alt="Mini EMR Logo" style="max-width: 100%; height: auto;" />
+    <a href="#" id="patients-link">Patients</a>
+    <a href="#" id="appointments-link">Appointments</a>
+    <a href="#" id="prescriptions-link">Prescriptions</a>
+    <a href="#" id="labs-link">Lab Results</a>
+</div>
+
+<div class="main">
+    <div class="header">
+        <h2>Welcome, <span id="doctor-name"></span></h2>
+        <button id="logout-btn">Logout</button>
+    </div>
+    <div class="content"></div>
+</div>
+
+<script>
+const API = "http://127.0.0.1:5000/api";
+
+// Ensure user is logged in and get their name
+fetch(`${API}/current_user`, {credentials:"include"})
+.then(r=>r.json())
+.then(res=>{
+    if(!res.username){
+        window.location.href = "index.html"; // kick back to login if not logged in
+        return;
+    }
+    document.getElementById("doctor-name").textContent = res.username;
+    loadPatient();
+});
+
+// Logout
+document.getElementById("logout-btn").onclick = () => {
+fetch(`${API}/logout`, {method:"POST", credentials:"include"})
+    .then(()=> window.location.href = "index.html");
+};
+
+// Existing loaders
+function loadPatient() {
+    fetch(`${API}/patient`, {credentials:"include"})
+    .then(r=>r.json())
+    .then(data=>{
+        const c=document.querySelector(".content");
+        c.innerHTML=`
+        <div class="patient-info">
+            <h3>Patient Summary</h3>
+            <p><strong>Name:</strong> ${data.patient_name}</p>
+            <p><strong>Age:</strong> ${data.patient_age}</p>
+            <p><strong>ID:</strong> ${data.patient_id}</p>
+            <h3>Vitals</h3>
+            <div>
+            <div><strong>BP:</strong> ${data.vitals.bp}</div>
+            <div><strong>HR:</strong> ${data.vitals.hr}</div>
+            <div><strong>Temp:</strong> ${data.vitals.temp}</div>
+            <div><strong>Resp Rate:</strong> ${data.vitals.rr}</div>
+            </div>
+            <h3>Notes</h3>
+            <p>${data.notes}</p>
+        </div>`;
+    });
+}
+function loadAppointments(){
+    fetch(`${API}/appointments`,{credentials:"include"})
+    .then(r=>r.json())
+    .then(d=>{
+        document.querySelector(".content").innerHTML =
+        "<h3>Appointments</h3><ul>"+
+        d.appointments.map(a=>`<li>${a.date} at ${a.time} — ${a.reason}</li>`).join("")+"</ul>";
+    });
+}
+function loadPrescriptions(){
+    fetch(`${API}/prescriptions`,{credentials:"include"})
+    .then(r=>r.json())
+    .then(d=>{
+        document.querySelector(".content").innerHTML =
+        "<h3>Prescriptions</h3><ul>"+
+        d.prescriptions.map(p=>`<li>${p.drug} — ${p.dosage}, ${p.frequency}</li>`).join("")+"</ul>";
+    });
+}
+function loadLabs(){
+    fetch(`${API}/labs`,{credentials:"include"})
+    .then(r=>r.json())
+    .then(d=>{
+        document.querySelector(".content").innerHTML =
+        "<h3>Lab Results</h3><ul>"+
+        d.labs.map(l=>`<li>${l.test} (${l.date}) — ${l.result}</li>`).join("")+"</ul>";
+    });
+}
+
+document.getElementById("patients-link").onclick = e=>{e.preventDefault();loadPatient();};
+document.getElementById("appointments-link").onclick = e=>{e.preventDefault();loadAppointments();};
+document.getElementById("prescriptions-link").onclick = e=>{e.preventDefault();loadPrescriptions();};
+document.getElementById("labs-link").onclick = e=>{e.preventDefault();loadLabs();};
+</script>
+</body>
+</html>
