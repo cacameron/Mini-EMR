@@ -3,58 +3,42 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Patient Login - Mini EMR</title>
+<title>Patient View - Mini EMR</title>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="login-container">
-    <h2>Patient Login</h2>
-    <form id="loginForm">
-        <label for="username">Username</label>
-        <input type="text" id="username" required autocomplete="off" />
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" required autocomplete="off" />
-
-        <button type="submit">Login</button>
-    </form>
-    <p id="error-message" style="color: red; display: none;">Invalid login. Try again</p>
+<div class="patient-container">
+    <h2>Patient Information</h2>
+    <div id="patientInfo"></div>
+    <button id="logoutBtn">Logout</button>
 </div>
 
 <script>
-const validUser = "john123";
-const validPass = "pass123";
+// Get patient data from localStorage
+const patientData = JSON.parse(localStorage.getItem("patientData"));
 
-// Clear previous session on page load
-localStorage.removeItem("patientData");
+if (!patientData) {
+    // If no data, redirect to login page
+    window.location.href = "PatientLogin.html";
+} else {
+    // Display patient info
+    const infoDiv = document.getElementById("patientInfo");
+    infoDiv.innerHTML = `
+        <p><strong>Name:</strong> ${patientData.name}</p>
+        <p><strong>Age:</strong> ${patientData.age}</p>
+        <p><strong>ID:</strong> ${patientData.id}</p>
+        <p><strong>Blood Pressure:</strong> ${patientData.bp}</p>
+        <p><strong>Heart Rate:</strong> ${patientData.hr}</p>
+        <p><strong>Temperature:</strong> ${patientData.temp}</p>
+        <p><strong>Respiration Rate:</strong> ${patientData.rr}</p>
+        <p><strong>Notes:</strong> ${patientData.notes}</p>
+    `;
+}
 
-document.getElementById("loginForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const enteredUser = document.getElementById("username").value.trim();
-    const enteredPass = document.getElementById("password").value.trim();
-
-    document.getElementById("error-message").style.display = "none";
-
-    if (enteredUser === validUser && enteredPass === validPass) {
-        const patientData = {
-            name: "John Doe",
-            age: 30,
-            id: "P123456",
-            bp: "120/80",
-            hr: 72,
-            temp: "98.6°F",
-            rr: 16,
-            notes: "Patient is in good health."
-        };
-        localStorage.setItem("patientData", JSON.stringify(patientData));
-
-        // Redirect to patient view page
-        window.location.href = "patientView.html";
-    } else {
-        localStorage.removeItem("patientData");
-        document.getElementById("error-message").style.display = "block";
-    }
+// Logout button
+document.getElementById("logoutBtn").addEventListener("click", function() {
+    localStorage.removeItem("patientData");
+    window.location.href = "PatientLogin.html";
 });
 </script>
 </body>
