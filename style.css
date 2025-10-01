@@ -37,10 +37,10 @@ color: #0073cf;
 
 /* ✅ Logo inside sidebar */
 .sidebar img {
-  width: 150px;          /* adjust size as needed */
-max-width: 100%;
-display: block;
-  margin: 0 auto 20px;   /* center horizontally and add space below */
+  width: 150px;          
+  max-width: 100%;
+  display: block;
+  margin: 0 auto 20px;   
 }
 
 /* Main layout */
@@ -124,4 +124,68 @@ cursor: pointer;
 }
 button:hover {
 background: #ff0000;
+}
+
+/* ================================
+  LOGIN PAGE STYLING
+   ================================ */
+.login-container {
+  max-width: 400px;
+  margin: 100px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1338BE; /* matches doctor view blue */
+}
+
+.login-container label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.login-container input:focus {
+  outline: none;
+  border-color: #0073cf;
+  box-shadow: 0 0 4px rgba(0,115,207,0.5);
+}
+
+.login-container button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background: #0073cf;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-container button:hover {
+  background: #0056b3;
+}
+
+#error-message {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+  color: #0056b3;
 }
