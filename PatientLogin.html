@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Patient View - Mini EMR</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="patient-container">
+    <h2>Patient Information</h2>
+    <div id="patientInfo"></div>
+    <button id="logoutBtn">Logout</button>
+</div>
+
+<script>
+// Get patient data from localStorage
+const patientData = JSON.parse(localStorage.getItem("patientData"));
+
+if (!patientData) {
+    // If no data, redirect to login page
+    window.location.href = "patientViewLogin.html";
+} else {
+    // Display patient info
+    const infoDiv = document.getElementById("patientInfo");
+    infoDiv.innerHTML = `
+        <p><strong>Name:</strong> ${patientData.name}</p>
+        <p><strong>Age:</strong> ${patientData.age}</p>
+        <p><strong>ID:</strong> ${patientData.id}</p>
+        <p><strong>Blood Pressure:</strong> ${patientData.bp}</p>
+        <p><strong>Heart Rate:</strong> ${patientData.hr}</p>
+        <p><strong>Temperature:</strong> ${patientData.temp}</p>
+        <p><strong>Respiration Rate:</strong> ${patientData.rr}</p>
+        <p><strong>Notes:</strong> ${patientData.notes}</p>
+    `;
+}
+
+// Logout button
+document.getElementById("logoutBtn").addEventListener("click", function() {
+    localStorage.removeItem("patientData");
+    window.location.href = "patientViewLogin.html";
+});
+</script>
+</body>
+</html>
