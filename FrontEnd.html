@@ -3,113 +3,64 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mini EMR – Doctor View</title>
+<title>Mini EMR – Login</title>
 <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-<div class="sidebar">
-    <!-- Logo displayed at the top of the sidebar -->
-    <img src="LogoForMiniEMR.png" alt="Mini EMR Logo" style="max-width: 100%; height: auto;" />
-    <a href="#" id="patients-link">Patients</a>
-    <a href="#" id="appointments-link">Appointments</a>
-    <a href="#" id="prescriptions-link">Prescriptions</a>
-    <a href="#" id="labs-link">Lab Results</a>
+<body style="background:#ecf0f1;display:flex;justify-content:center;align-items:center;height:100vh;">
+<div class="login-box" style="background:white;padding:2rem;border-radius:8px;
+    box-shadow:0 0 10px rgba(0,0,0,.1);width:300px;">
+    <h2 style="text-align:center;">Mini EMR Login</h2>
+    <input id="login-user" placeholder="Username"
+        style="width:100%;margin:.5rem 0;padding:.4rem;"><br>
+    <input id="login-pass" type="password" placeholder="Password"
+        style="width:100%;margin:.5rem 0;padding:.4rem;"><br>
+    <button id="login-btn" style="width:100%;margin:.5rem 0;">Login</button>
+    <button id="register-btn" style="width:100%;margin:.5rem 0;">Register</button>
+    <p id="login-msg" style="color:red;text-align:center;"></p>
 </div>
 
-<!-- Top of the screen -->
-<div class="main">
-    <div class="header">
-        <h2>Welcome, <span id="doctor-name"></span></h2>
-        <button>Logout</button>
-    </div>
-
-    <div class="content">
-        <!-- This section will update dynamically with JS -->
-    </div>
-</div>
-
-<!-- JavaScript to fetch from backend -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Load patient info
-function loadPatient() {
-    fetch("http://127.0.0.1:5000/api/patient")
-    .then(res => res.json())
-    .then(data => {
-        const content = document.querySelector(".content");
-        content.innerHTML = `
-        <div class="patient-info">
-            <h3>Patient Summary</h3>
-            <p><strong>Name:</strong> ${data.patient_name}</p>
-            <p><strong>Age:</strong> ${data.patient_age}</p>
-            <p><strong>ID:</strong> ${data.patient_id}</p>
-            <h3>Vitals</h3>
-            <div>
-            <div><strong>BP:</strong> ${data.vitals.bp}</div>
-            <div><strong>HR:</strong> ${data.vitals.hr}</div>
-            <div><strong>Temp:</strong> ${data.vitals.temp}</div>
-            <div><strong>Respiratory Rate:</strong> ${data.vitals.rr}</div>
-            </div>
-            <h3>Notes</h3>
-            <p>${data.notes}</p>
-        </div>
-        `;
-        document.getElementById("doctor-name").textContent = data.doctor_name;
+const API = "http://127.0.0.1:5000/api";
+
+// LOGIN
+document.getElementById("login-btn").onclick = () => {
+fetch(`${API}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({
+    username: document.getElementById("login-user").value,
+    password: document.getElementById("login-pass").value
     })
-    .catch(err => console.error("Error loading patient:", err));
-}
-
-  // Load appointments
-function loadAppointments() {
-    fetch("http://127.0.0.1:5000/api/appointments")
-    .then(res => res.json())
-    .then(data => {
-        document.querySelector(".content").innerHTML =
-        "<h3>Appointments</h3><ul>" +
-        data.appointments.map(a =>
-            `<li>${a.date} at ${a.time} — ${a.reason}</li>`
-        ).join("") + "</ul>";
-    })
-    .catch(err => console.error("Error loading appointments:", err));
-}
-
-  // Load prescriptions
-function loadPrescriptions() {
-    fetch("http://127.0.0.1:5000/api/prescriptions")
-    .then(res => res.json())
-    .then(data => {
-        document.querySelector(".content").innerHTML =
-        "<h3>Prescriptions</h3><ul>" +
-        data.prescriptions.map(p =>
-            `<li>${p.drug} — ${p.dosage}, ${p.frequency}</li>`
-        ).join("") + "</ul>";
-    })
-    .catch(err => console.error("Error loading prescriptions:", err));
-}
-
-  // Load labs
-function loadLabs() {
-    fetch("http://127.0.0.1:5000/api/labs")
-    .then(res => res.json())
-    .then(data => {
-        document.querySelector(".content").innerHTML =
-        "<h3>Lab Results</h3><ul>" +
-        data.labs.map(l =>
-            `<li>${l.test} (${l.date}) — ${l.result}</li>`
-        ).join("") + "</ul>";
-    })
-    .catch(err => console.error("Error loading labs:", err));
-}
-
-  // Attach events to sidebar links
-document.getElementById("patients-link").addEventListener("click", e => { e.preventDefault(); loadPatient(); });
-document.getElementById("appointments-link").addEventListener("click", e => { e.preventDefault(); loadAppointments(); });
-document.getElementById("prescriptions-link").addEventListener("click", e => { e.preventDefault(); loadPrescriptions(); });
-document.getElementById("labs-link").addEventListener("click", e => { e.preventDefault(); loadLabs(); });
-
-  // Load patient summary first
-loadPatient();
+})
+.then(r => r.json())
+.then(res => {
+    if (res.username) {
+      // ✅ move to the records screen
+    window.location.href = "records.html";
+    } else {
+    document.getElementById("login-msg").textContent =
+        res.error || "Login failed";
+    }
 });
+};
+
+// REGISTER
+document.getElementById("register-btn").onclick = () => {
+fetch(`${API}/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+    username: document.getElementById("login-user").value,
+    password: document.getElementById("login-pass").value
+    })
+})
+.then(r => r.json())
+.then(res => {
+    document.getElementById("login-msg").textContent =
+    res.message || res.error || "";
+});
+};
 </script>
 </body>
 </html>
