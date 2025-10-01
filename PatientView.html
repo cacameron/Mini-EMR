@@ -1,5 +1,4 @@
-    <!--This is the screen for what the patient sees  -->
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -9,56 +8,86 @@
 </head>
 <body>
 
-<!--Side bar on left hand side of screen -->
+<!-- Sidebar with logo -->
 <div class="sidebar">
-    <!-- Logo displayed at the top of the sidebar -->
     <img src="LogoForMiniEMR.png" alt="Mini EMR Logo" style="max-width: 100%; height: auto;" />
     <a href="#">My Health</a>
     <a href="#">Appointments</a>
     <a href="#">Prescriptions</a>
     <a href="#">Lab Results</a>
-<!--Add if there is time-->
-<!--<a href="#">Bill Amount</a>-->
-<!-- Add settings if there is time-->
-<!-- If enough time add in a thing so the patient can pay there bill-->
 </div>
-<!-- Top of the screen -->
-<!-- make it to where it takes the patient login and displays there name -->
+
+<!-- Main patient info -->
 <div class="main">
     <div class="header">
-        <h2>Welcome, <span id="patient-name"></span> </span></h2>
-        <button>Logout</button>
+        <h2>Welcome, <span id="patient-name-header"></span></h2>
+        <button id="logoutBtn">Logout</button>
     </div>
-    <!-- middle content area with the health summary-->
+
     <div class="content">
         <div class="patient-info">
-        <h3>My Health Summary</h3>
-        <p><strong>Name:</strong> <span id="patient-name"></span></p>
-        <p><strong>Age:</strong> <span id="patient-age"></span> </p>
-    <!-- Patient ID should be auto generated from the dr and not editable by the patient-->
-        <p><strong>ID:</strong> <span id="patient-id"></span></p>
-<!-- Vital section that is in the middle column-->
-        <h3>My Vitals</h3>
-        <div class="vitals">
-        <div><strong>BP:</strong> <span id="patient-bp"></span></div>
-        <div><strong>HR:</strong> <span id="patient-hr"></span></div>
-        <div><strong>Temp:</strong> <span id="patient-temp"></span></div>
-        <div><strong>Respiratory Rate:</strong> <span id="patient-respiratory-rate"></span></div>
+            <h3>My Health Summary</h3>
+            <p><strong>Name:</strong> <span id="patient-name-info"></span></p>
+            <p><strong>Age:</strong> <span id="patient-age"></span></p>
+            <p><strong>ID:</strong> <span id="patient-id"></span></p>
+
+            <h3>My Vitals</h3>
+            <div class="vitals">
+                <div><strong>BP:</strong> <span id="patient-bp"></span></div>
+                <div><strong>HR:</strong> <span id="patient-hr"></span></div>
+                <div><strong>Temp:</strong> <span id="patient-temp"></span></div>
+                <div><strong>Respiratory Rate:</strong> <span id="patient-respiratory-rate"></span></div>
+            </div>
+
+            <h3>My Notes</h3>
+            <p>Your doctor has noted: <span id="doctor-notes"></span></p>
         </div>
-<!-- Notes section that is in the middle column from the doctor-->
-        <h3>My Notes</h3>
-        <p>Your doctor has noted: <span id="doctor-notes"></span></p>
-        </div>
-<!-- Side panel on the right hand side with quick actions-->
-<!-- If time add link to message the dr-->
+
         <div class="side-panel">
-        <h3>Quick Actions</h3>
-        <ul>
-        <!-- Typical links that the user would need -->
-        <li><a href="#">Request Appointment</a></li>
-        <li><a href="#">Request Prescription Refill</a></li>
-        <li><a href="#">View Lab Results</a></li>
-        <li><a href="#">Update Personal Info</a></li>
-        </ul>
+            <h3>Quick Actions</h3>
+            <ul>
+                <li><a href="#">Request Appointment</a></li>
+                <li><a href="#">Request Prescription Refill</a></li>
+                <li><a href="#">View Lab Results</a></li>
+                <li><a href="#">Update Personal Info</a></li>
+            </ul>
         </div>
     </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Get patient data from localStorage
+    const patient = JSON.parse(localStorage.getItem("patientData"));
+
+    // If not logged in, redirect to login
+    if (!patient) {
+        window.location.href = "patientLogin.html";
+        return;
+    }
+
+    // Fill patient info
+    document.getElementById("patient-name-header").textContent = patient.name;
+    document.getElementById("patient-name-info").textContent = patient.name;
+    document.getElementById("patient-age").textContent = patient.age;
+    document.getElementById("patient-id").textContent = patient.id;
+    document.getElementById("patient-bp").textContent = patient.bp;
+    document.getElementById("patient-hr").textContent = patient.hr;
+    document.getElementById("patient-temp").textContent = patient.temp;
+    document.getElementById("patient-respiratory-rate").textContent = patient.rr;
+    document.getElementById("doctor-notes").textContent = patient.notes;
+
+    // Logout button functionality
+    const logoutBtn = document.getElementById("logoutBtn");
+    logoutBtn.addEventListener("click", function() {
+        // Clear patient session
+        localStorage.removeItem("patientData");
+
+        // Redirect to login page
+        window.location.href = "patientLogin.html";
+    });
+});
+</script>
+
+</body>
+</html>
