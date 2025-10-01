@@ -4,21 +4,14 @@
 4. We split the task up into frontend, backend, and data base since you can't find a database to use
 5. We picked what coding languages we are going to use
 6. Front end is using HTML and CSS
-7. Backend is using Python, MAMP stack,PHP (server side), phpAdmin (managing SQL database)
-8. For the database we are going MySQL
+7. Backend is using Python, and Mongodb
+8. For the database we are using Mongodb
 9. We divided our task into what people wanted to do and strenghts
 10. We have one main person working on our front end
 11. We have one main person working on our Backend
 12. We have one person working on the data base that will help with front and backend coding to not have just one side drowing
 13. For the data base we created people by randomly doing it
-      for the people we have lastName, firstName, DOB, Gender, height, weight, allergies and Phone #
-          so far for this we have 34 people that we have randomly created. For the phone # we typed 10 numbers so hopefully we don't have an actual phone number
-14. Very import to do these installs for the backend or it will not work
-      open Visual Studio code and make a file called backend.py
-            than go to the terminal 
-                  then you want to install python3 -m pip install pydantic fastapi uvicorn
-                              after you did that and pip didn't work on the backend typing part do this install in ther termianl python3 -m pip --version
-                        then uvicorn backend:app --reload
-      and it will work how you want it to
+      for the people we have FirstName, LastName, Email, and password
+            We have 50 people that we have randomly created
 
 
