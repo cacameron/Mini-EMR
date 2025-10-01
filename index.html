@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mini EMR – Login</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body style="background:#ecf0f1;display:flex;justify-content:center;align-items:center;height:100vh;">
+<div class="login-box" style="background:white;padding:2rem;border-radius:8px;box-shadow:0 0 10px rgba(0,0,0,.1);width:300px;">
+    <h2 style="text-align:center;">Mini EMR Login</h2>
+    <input id="login-user" placeholder="Username" style="width:100%;margin:.5rem 0;padding:.4rem;"><br>
+    <input id="login-pass" type="password" placeholder="Password" style="width:100%;margin:.5rem 0;padding:.4rem;"><br>
+    <button id="login-btn" style="width:100%;margin:.5rem 0;">Login</button>
+    <button id="register-btn" style="width:100%;margin:.5rem 0;">Register</button>
+    <p id="login-msg" style="color:red;text-align:center;"></p>
+</div>
+
+<script>
+const API = "http://127.0.0.1:5000/api";
+
+// Login
+document.getElementById("login-btn").onclick = () => {
+fetch(`${API}/login`, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    credentials:"include",
+    body:JSON.stringify({
+    username:document.getElementById("login-user").value,
+    password:document.getElementById("login-pass").value
+    })
+})
+.then(r=>r.json())
+.then(res=>{
+    if(res.username){
+      // ✅ redirect to records page on success
+    window.location.href = "records.html";
+    } else {
+    document.getElementById("login-msg").textContent = res.error || "Login failed";
+    }
+});
+};
+
+// Register
+document.getElementById("register-btn").onclick = () => {
+fetch(`${API}/register`, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+    username:document.getElementById("login-user").value,
+    password:document.getElementById("login-pass").value
+    })
+})
+.then(r=>r.json())
+.then(res=>{
+    document.getElementById("login-msg").textContent =
+    res.message || res.error || "";
+});
+};
+</script>
+</body>
+</html>
