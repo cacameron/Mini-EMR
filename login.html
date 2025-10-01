@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctor Login – Mini EMR</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="login-container">
+    <h2>Doctor Login</h2>
+    <form id="loginForm">
+    <label for="username">Username:</label>
+    <input type="text" id="username" required />
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" required />
+
+    <button type="submit">Login</button>
+    </form>
+    <p id="error-message" style="color: red; display: none;">Invalid login. Try again.</p>
+</div>
+
+<script>
+    const validUser = "doctor";
+    const validPass = "password123";
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const enteredUser = document.getElementById("username").value.trim();
+    const enteredPass = document.getElementById("password").value.trim();
+
+    if (enteredUser === validUser && enteredPass === validPass) {
+        // Save login info
+        localStorage.setItem("doctorName", enteredUser);
+
+        // ✅ Delay redirect slightly so localStorage saves before page load
+        setTimeout(() => {
+        window.location.href = "FrontEnd.html";
+        }, 200);
+    } else {
+        document.getElementById("error-message").style.display = "block";
+    }
+    });
+</script>
+</body>
+</html>
