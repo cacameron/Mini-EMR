@@ -17,10 +17,24 @@
       We created our own accounts
       Than made a cluster on mongodb and invited everyone to our cluster that is in our group
 How to connect Mongodb to Visusal Studio Code: 
-      We created a viritual enviroment in Visual studio, then on the .env file we added the mongodb link:
+      We created a viritual enviroment in Visual studio:
+For Mac Computers: 
+      1. Went to the terminal and typed python3 -m venv venv  and hit enter    
+      2. Then we typed source venv/bin/activate  and also hit enter afterwards
+      3. then we got the .env.example file and added the
             #connection string for python backend
             MONGO_URI=mongodb+srv://<db_username>:<db_password>@cluster0.yexocbd.mongodb.net/
       This is an example but you would have to plug your own Mongodb information in. 
+      We added our own information so it would look like //username:password@cluster0.yexcdb.mongodb.net/
+      4. We had to install pip install python-dotenv
+      5. Than we had to also install pip install pymongo 
+      6. Once we got those installed on the termianl we ran the command python test_connection.py 
+For Windows Comptuers: 
+      1. Open new terminal and choose command prompt (default is powershell)
+      2. Run the following commands using py: 
+            Create the virtual env: py -m venv venv
+            Activate the environment: .\venv\Scripts\activate
+            
 15. We than ran the test_connection.py file to pull up the python database
             
 
