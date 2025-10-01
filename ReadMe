@@ -13,5 +13,11 @@
 13. For the data base we created people by randomly doing it
       for the people we have FirstName, LastName, Email, and password
             We have 50 people that we have randomly created
+14. Mongodb:
+      We created our own accounts
+      Than made a cluster on mongodb and invited everyone to our cluster that is in our group
+How to connect Mongodb to Visusal Studio Code: 
+      We created a viritual enviroment in Visual studio, then on the .env file we added the mongodb link:
+            
 
 
