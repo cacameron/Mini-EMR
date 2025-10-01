@@ -31,9 +31,14 @@ For Mac Computers:
       6. Once we got those installed on the termianl we ran the command python test_connection.py 
 For Windows Comptuers: 
       1. Open new terminal and choose command prompt (default is powershell)
-      2. Run the following commands using py: 
-            Create the virtual env: py -m venv venv
-            Activate the environment: .\venv\Scripts\activate
+      2. Run the following commands: 
+            a. Create the virtual env: py -m venv venv
+            b. Activate the environment: .\venv\Scripts\activate
+                  => you will know when you're in if you see (venv)
+      3. Open the .env.example file and rename it as .env. Edit the connection string with database user credentials.
+      4. Go back to terminal:
+            a. Install the packages from the requirements.txt: pip install <package_name>
+            b. Test the connection: py test_connection.py
             
 15. We than ran the test_connection.py file to pull up the python database
             
