@@ -3,36 +3,164 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Patient View - Mini EMR</title>
+<title>Patient Dashboard – Mini EMR</title>
 <link rel="stylesheet" href="style.css" />
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        /* Blue background */
+        background-color: #0056b3; 
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    header img {
+        width: 120px;
+    }
+
+    main {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        padding: 40px;
+    }
+
+    /* Left center area for login/logout or welcome message */
+    .center-box {
+        background-color: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 300px;
+    }
+
+    .center-box h2 {
+        color: #007BFF;
+        margin-bottom: 20px;
+    }
+
+    .center-box button {
+        background-color: #0056b3;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+    .center-box button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Right side cards */
+    .right-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        flex: 1;
+    }
+
+    .card {
+        background-color: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        text-align: center;
+    }
+
+    .card h3 {
+        color: #007BFF;
+        margin-bottom: 15px;
+    }
+
+    .card a {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #0056b3;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .card a:hover {
+        background-color: #0056b3;
+    }
+
+    @media(max-width: 900px){
+        main {
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+        .right-cards {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .card {
+            width: 250px;
+        }
+    }
+</style>
 </head>
 <body>
-<div class="patient-container">
-    <h2>Patient Information</h2>
-    <div id="patientInfo"></div>
-    <button id="logoutBtn">Logout</button>
-</div>
+
+<header>
+    <img src="logo.png" alt="Mini EMR Logo">
+</header>
+
+<main>
+    <!-- Center area for welcome and logout -->
+    <div class="center-box">
+        <h2>Welcome, <span id="patientName"></span></h2>
+        <button id="logoutBtn">Logout</button>
+    </div>
+
+    <!-- Right side cards -->
+    <div class="right-cards">
+        <div class="card">
+            <h3>Vitals</h3>
+            <p>Check your blood pressure, heart rate, and temperature.</p>
+            <a href="#">View Vitals</a>
+        </div>
+        <div class="card">
+            <h3>Medical Records</h3>
+            <p>Access your past medical history and notes.</p>
+            <a href="#">View Records</a>
+        </div>
+        <div class="card">
+            <h3>Appointments</h3>
+            <p>Schedule or view your upcoming appointments.</p>
+            <a href="#">View Appointments</a>
+        </div>
+    </div>
+</main>
 
 <script>
 // Get patient data from localStorage
 const patientData = JSON.parse(localStorage.getItem("patientData"));
 
 if (!patientData) {
-    // If no data, redirect to login page
     window.location.href = "PatientLogin.html";
 } else {
-    // Display patient info
-    const infoDiv = document.getElementById("patientInfo");
-    infoDiv.innerHTML = `
-        <p><strong>Name:</strong> ${patientData.name}</p>
-        <p><strong>Age:</strong> ${patientData.age}</p>
-        <p><strong>ID:</strong> ${patientData.id}</p>
-        <p><strong>Blood Pressure:</strong> ${patientData.bp}</p>
-        <p><strong>Heart Rate:</strong> ${patientData.hr}</p>
-        <p><strong>Temperature:</strong> ${patientData.temp}</p>
-        <p><strong>Respiration Rate:</strong> ${patientData.rr}</p>
-        <p><strong>Notes:</strong> ${patientData.notes}</p>
-    `;
+    document.getElementById("patientName").textContent = patientData.name;
 }
 
 // Logout button
@@ -41,5 +169,6 @@ document.getElementById("logoutBtn").addEventListener("click", function() {
     window.location.href = "PatientLogin.html";
 });
 </script>
+
 </body>
 </html>
