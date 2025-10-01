@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Patient Login – Mini EMR</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="login-container">
+    <h2>Patient Login</h2>
+    <form id="loginForm">
+        <label for="username">Username</label>
+        <input type="text" id="username" required />
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" required />
+
+        <button type="submit">Login</button>
+    </form>
+    <p id="error-message" style="color: red; display: none">Invalid login. Try again</p>
+</div>
+
+<script>
+    const validUser = "john123";
+    const validPass = "pass123";
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const enteredUser = document.getElementById("username").value.trim();
+        const enteredPass = document.getElementById("password").value.trim();
+
+        if (enteredUser === validUser && enteredPass === validPass) {
+            // Save patient data in localStorage
+            const patientData = {
+                name: "John Doe",
+                age: 30,
+                id: "P123456",
+                bp: "120/80",
+                hr: 72,
+                temp: "98.6°F",
+                rr: 16,
+                notes: "Patient is in good health."
+            };
+            localStorage.setItem("patientData", JSON.stringify(patientData));
+
+            // Redirect to patient view
+            window.location.href = "patientView.html";
+        } else {
+            document.getElementById("error-message").style.display = "block";
+        }
+    });
+
+    // Optional: Clear previous session if any
+    localStorage.removeItem("patientData");
+</script>
+</body>
+</html>
