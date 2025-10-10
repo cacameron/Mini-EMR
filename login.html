@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mini EMR – Doctor Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mini EMR – Doctor Login</title>
 <style>
 body {
     font-family: 'Segoe UI', Roboto, sans-serif;
@@ -21,19 +21,44 @@ header {
 }
 
 .container {
-    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+}
+
+.login-box {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
     text-align: center;
 }
 
-button {
-    padding: 10px 20px;
+.login-box h2 {
+    margin-bottom: 20px;
+    color: #0a66c2;
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
     font-size: 16px;
-    border-radius: 8px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
     border: none;
     background-color: #0a66c2;
     color: white;
     cursor: pointer;
-    margin-top: 20px;
 }
 
 button:hover {
@@ -42,28 +67,30 @@ button:hover {
 </style>
 </head>
 <body>
-<header>Welcome to the Doctor Dashboard</header>
+<header>Mini EMR – Doctor Login</header>
+
 <div class="container">
-    <h2 id="welcomeMessage"></h2>
-    <p>Here you can access patient records, schedules, and other doctor tools.</p>
-    <button id="logoutBtn">Logout</button>
+    <div class="login-box">
+        <h2>Doctor Login</h2>
+        <input type="text" id="username" placeholder="Enter username" required />
+        <input type="password" id="password" placeholder="Enter password" required />
+        <button id="loginBtn">Login</button>
+    </div>
 </div>
 
 <script>
-// Check if doctor is logged in
-const doctorName = localStorage.getItem("doctorName");
-if (!doctorName) {
-    // Redirect to doctor login if not logged in
-    window.location.href = "FrontEnd.html";
-}
+document.getElementById("loginBtn").addEventListener("click", function() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-// Display welcome message
-document.getElementById("welcomeMessage").innerText = `Hello, Dr. ${doctorName}!`;
-
-// Logout functionality
-document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.removeItem("doctorName");
-    window.location.href = "FrontEnd.html";
+    // Example login (replace with real check or backend later)
+    if (username === "doctor" && password === "password123") {
+        localStorage.setItem("doctorName", username);
+        localStorage.setItem("userRole", "doctor");
+        window.location.href = "FrontEnd.html"; // Go to Doctor Dashboard
+    } else {
+        alert("Invalid username or password. Try 'doctor' / 'password123'.");
+    }
 });
 </script>
 </body>
