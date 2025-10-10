@@ -1,141 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Patient Login – Mini EMR</title>
-<link rel="stylesheet" href="style.css" />
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background-color: #0056b3; /* Blue background */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #e8f0fe;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
 
-    .login-container {
-        background-color: #ffffff;
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        width: 350px;
-        text-align: center;
-    }
+.login-container {
+    background-color: white;
+    border: 3px solid #0a66c2;
+    border-radius: 16px;
+    padding: 40px 50px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 350px;
+}
 
-    .login-container img {
-        width: 120px;
-        margin-bottom: 20px;
-    }
+.login-container h2 {
+    color: #0a66c2;
+    margin-bottom: 25px;
+    font-size: 26px;
+}
 
-    .login-container h2 {
-        margin-bottom: 25px;
-        color: #0056b3;
-    }
+label {
+    display: block;
+    text-align: left;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
 
-    .login-container label {
-        display: block;
-        text-align: left;
-        margin-bottom: 5px;
-        margin-top: 15px;
-    }
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    box-sizing: border-box;
+}
 
-    .login-container input {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-    }
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #0a66c2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
 
-    .login-container button {
-        width: 100%;
-        padding: 12px;
-        margin-top: 10px;
-        background-color: #0056b3;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 16px;
-        cursor: pointer;
-    }
+button:hover {
+    background-color: #004b99;
+}
 
-    .login-container button:hover {
-        background-color: #0056b3;
-    }
-
-    #error-message {
-        color: red;
-        margin-top: 10px;
-        display: none;
-    }
+#error-message {
+    color: red;
+    margin-top: 15px;
+    font-weight: 500;
+}
 </style>
 </head>
 <body>
 <div class="login-container">
-    <!-- Logo -->
-    <img src="logo.png" alt="Mini EMR Logo" />
-
     <h2>Patient Login</h2>
     <form id="loginForm">
-        <label for="id">Patient ID:</label>
-        <input type="text" id="id" required />
+    <label for="username">Username:</label>
+    <input type="text" id="username" placeholder="Enter username" required>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" required />
+    <label for="password">Password:</label>
+    <input type="password" id="password" placeholder="Enter password" required>
 
-        <button type="submit">Login</button>
+    <button type="submit">Login</button>
     </form>
-    <p id="error-message">Invalid ID or password.</p>
+    <p id="error-message" style="display: none;">Invalid login. Try again.</p>
 </div>
 
 <script>
-// Example "database" of patients
-const patientsDB = [
-    {
-        id: "P001",
-        password: "pass123",
-        name: "John Doe",
-        age: 32,
-        bp: "120/80",
-        hr: 72,
-        temp: "98.6°F",
-        rr: 16,
-        notes: "No current issues."
-    },
-    {
-        id: "P002",
-        password: "mypassword",
-        name: "Jane Smith",
-        age: 28,
-        bp: "110/70",
-        hr: 78,
-        temp: "98.4°F",
-        rr: 18,
-        notes: "All vitals normal."
-    }
-];
+    const validUser = "patient";
+    const validPass = "pass123";
 
-document.getElementById("loginForm").addEventListener("submit", function(e) {
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
-    const enteredID = document.getElementById("id").value.trim();
+    const enteredUser = document.getElementById("username").value.trim();
     const enteredPass = document.getElementById("password").value.trim();
 
-    const patient = patientsDB.find(p => p.id === enteredID && p.password === enteredPass);
-
-    if (patient) {
-        localStorage.setItem("patientData", JSON.stringify(patient));
-
-        setTimeout(() => {
-            window.location.href = "PatientView.html";
-        }, 200);
+    if (enteredUser === validUser && enteredPass === validPass) {
+        // ✅ Save user data and redirect
+        const patientData = { name: enteredUser };
+        localStorage.setItem("patientData", JSON.stringify(patientData));
+        window.location.href = "patientView.html";
     } else {
         document.getElementById("error-message").style.display = "block";
     }
-});
+    });
 </script>
 </body>
 </html>
