@@ -3,46 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Doctor Login – Mini EMR</title>
-<link rel="stylesheet" href="style.css">
+<title>Mini EMR – Doctor Dashboard</title>
+<style>
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #e8f0fe;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #0a66c2;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.container {
+    padding: 30px;
+    text-align: center;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    background-color: #0a66c2;
+    color: white;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #004b99;
+}
+</style>
 </head>
 <body>
-<div class="login-container">
-    <h2>Doctor Login</h2>
-    <form id="loginForm">
-    <label for="username">Username:</label>
-    <input type="text" id="username" required />
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" required />
-
-    <button type="submit">Login</button>
-    </form>
-    <p id="error-message" style="color: red; display: none;">Invalid login. Try again.</p>
+<header>Welcome to the Doctor Dashboard</header>
+<div class="container">
+    <h2 id="welcomeMessage"></h2>
+    <p>Here you can access patient records, schedules, and other doctor tools.</p>
+    <button id="logoutBtn">Logout</button>
 </div>
 
 <script>
-    const validUser = "doctor";
-    const validPass = "password123";
+// Check if doctor is logged in
+const doctorName = localStorage.getItem("doctorName");
+if (!doctorName) {
+    // Redirect to doctor login if not logged in
+    window.location.href = "FrontEnd.html";
+}
 
-    document.getElementById("loginForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+// Display welcome message
+document.getElementById("welcomeMessage").innerText = `Hello, Dr. ${doctorName}!`;
 
-    const enteredUser = document.getElementById("username").value.trim();
-    const enteredPass = document.getElementById("password").value.trim();
-
-    if (enteredUser === validUser && enteredPass === validPass) {
-        // Save login info
-        localStorage.setItem("doctorName", enteredUser);
-
-        //  Delay redirect slightly so localStorage saves before page load
-        setTimeout(() => {
-        window.location.href = "FrontEnd.html";
-        }, 200);
-    } else {
-        document.getElementById("error-message").style.display = "block";
-    }
-    });
+// Logout functionality
+document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.removeItem("doctorName");
+    window.location.href = "FrontEnd.html";
+});
 </script>
 </body>
 </html>
