@@ -42,6 +42,7 @@ For Windows Computers:
             b. Test the connection: py test_connection.py
             
 15. We than ran the test_connection.py file to pull up the python database
+
  <img width="332" height="650" alt="Image" src="https://github.com/user-attachments/assets/275debf5-f5ea-4200-bf43-ac067509e9e9" />
             
 
