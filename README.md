@@ -16,7 +16,7 @@ We decided to do a Mini-EMR because we wanted to help gear something towards sma
 
 Front End: HTML, CSS and Java scritpt
 
-Back end: Visual Stuido code, Java script
+Back end: python, Java script
 
 Database: Mongodb
 
