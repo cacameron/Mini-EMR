@@ -1,133 +1,117 @@
+<!--Front End for Dr View-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mini EMR – Doctor Dashboard</title>
-<link rel="stylesheet" href="style.css" />
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #e8f0fe;
-        margin: 0;
-        padding: 0;
-    }
-
-    .header {
-        text-align: center;
-        background-color: #0056b3;
-        color: white;
-        padding: 20px;
-    }
-
-    .header h1 {
-        margin: 0;
-        font-size: 28px;
-    }
-
-    .logout-btn {
-        background-color: white;
-        color: #0056b3;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 6px;
-        font-weight: bold;
-        cursor: pointer;
-        margin-top: 10px;
-    }
-
-    .logout-btn:hover {
-        background-color: #f0f0f0;
-    }
-
-    .content {
-        display: flex;
-        justify-content: space-evenly;
-        align-items: stretch;
-        margin: 40px 20px;
-        gap: 20px;
-    }
-
-    .section {
-        flex: 1;
-        background-color: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        text-align: center;
-        transition: transform 0.2s ease;
-    }
-
-    .section:hover {
-        transform: translateY(-5px);
-    }
-
-    .section h2 {
-        color: #0056b3;
-        margin-bottom: 15px;
-    }
-
-    .section p {
-        color: #333;
-        font-size: 15px;
-        margin-bottom: 20px;
-    }
-
-    .section a {
-        display: inline-block;
-        background-color: #0056b3;
-        color: white;
-        text-decoration: none;
-        padding: 10px 18px;
-        border-radius: 6px;
-        transition: background-color 0.2s ease;
-    }
-
-    .section a:hover {
-        background-color: #004494;
-    }
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #e8f0fe;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background-color: #0a66c2;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+}
+header img {
+    position: absolute;
+    left: 20px;
+    top: 10px;
+    height: 50px;
+}
+#logoutBtn {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    background: white;
+    color: #0a66c2;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 40px;
+}
+.section {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    width: 30%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
 </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Welcome, <span id="doctorName">Doctor</span></h1>
-        <button class="logout-btn" id="logoutBtn">Logout</button>
-    </div>
+<header>
+    <img src="logoForMiniEMR.png" alt="Mini EMR Logo">
+    <h1>Doctor Dashboard</h1>
+    <button id="logoutBtn" onclick="logout()">Logout</button>
+</header>
 
-    <div class="content">
-        <div class="section">
-            <h2>Vitals</h2>
-            <p>Check your blood pressure, heart rate, and temperature.</p>
-            <a href="#">View Vitals</a>
-        </div>
-
-        <div class="section">
-            <h2>Medical Records</h2>
-            <p>Access your past medical history and doctor’s notes.</p>
-            <a href="#">View Records</a>
-        </div>
-
-        <div class="section">
-            <h2>Appointments</h2>
-            <p>Schedule or view your upcoming appointments.</p>
-            <a href="#">View Appointments</a>
-        </div>
-    </div>
+<div class="container">
+    <div class="section" id="patientSection"><h3>Patient Info</h3><p>Loading...</p></div>
+    <div class="section" id="appointmentsSection"><h3>Appointments</h3><p>Loading...</p></div>
+    <div class="section" id="labsSection"><h3>Labs & Prescriptions</h3><p>Loading...</p></div>
+</div>
 
 <script>
-    //  Get doctor data from localStorage
-    const doctorData = JSON.parse(localStorage.getItem("doctorName"));
-    if (!doctorData) {
+async function checkLogin() {
+    const res = await fetch("http://127.0.0.1:5000/api/current_user", { credentials: "include" });
+    const data = await res.json();
+    if (!data.username) {
         window.location.href = "login.html";
     } else {
-        document.getElementById("patientName").textContent = patientData.name;
+        loadData();
     }
+}
 
-    //  Logout button clears storage & loops back to login
-    document.getElementById("logoutBtn").addEventListener("click", function() {
-        localStorage.removeItem("doctorName");
-        window.location.href = "login.html";
+async function logout() {
+    await fetch("http://127.0.0.1:5000/api/logout", {
+        method: "POST",
+        credentials: "include"
     });
+    window.location.href = "login.html";
+}
+
+async function loadData() {
+    const [patient, appointments, labs, prescriptions] = await Promise.all([
+        fetch("http://127.0.0.1:5000/api/patient", { credentials: "include" }).then(r=>r.json()),
+        fetch("http://127.0.0.1:5000/api/appointments", { credentials: "include" }).then(r=>r.json()),
+        fetch("http://127.0.0.1:5000/api/labs", { credentials: "include" }).then(r=>r.json()),
+        fetch("http://127.0.0.1:5000/api/prescriptions", { credentials: "include" }).then(r=>r.json())
+    ]);
+
+    document.getElementById("patientSection").innerHTML = `
+        <h3>Patient Info</h3>
+        <p><b>Name:</b> ${patient.patient_name}</p>
+        <p><b>Age:</b> ${patient.patient_age}</p>
+        <p><b>BP:</b> ${patient.vitals.bp}</p>
+        <p><b>Notes:</b> ${patient.notes}</p>
+    `;
+
+    document.getElementById("appointmentsSection").innerHTML = `
+        <h3>Appointments</h3>
+        <ul>${appointments.appointments.map(a => `<li>${a.date} - ${a.time}: ${a.reason}</li>`).join("")}</ul>
+    `;
+
+    document.getElementById("labsSection").innerHTML = `
+        <h3>Labs</h3>
+        <ul>${labs.labs.map(l => `<li>${l.test}: ${l.result}</li>`).join("")}</ul>
+        <h3>Prescriptions</h3>
+        <ul>${prescriptions.prescriptions.map(p => `<li>${p.drug} – ${p.dosage} (${p.frequency})</li>`).join("")}</ul>
+    `;
+}
+
+checkLogin();
 </script>
 </body>
 </html>
