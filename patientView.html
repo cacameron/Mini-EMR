@@ -1,4 +1,4 @@
-<!-- Patient login screen -->
+<!--patientView.html-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -124,7 +124,7 @@
         document.getElementById("patientName").textContent = patientData.name;
     }
 
-    // Logout button clears storage & loops back to login
+    //  Logout button clears storage & loops back to login
     document.getElementById("logoutBtn").addEventListener("click", function() {
         localStorage.removeItem("patientData");
         window.location.href = "PatientLogin.html";
