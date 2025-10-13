@@ -12,11 +12,11 @@ We decided to do a Mini-EMR because we wanted to help gear something towards sma
 - [@luminiousleslie](https://www.github.com/luminiousleslie)
 
 
-## Applications/Languages used
+## Tech Stack
 
-Front End: HTML, CSS and Javascritpt
+Front End: HTML, CSS and Java scritpt
 
-Back end:  Visual Stuido code, Javayscript
+Back end: Visual Stuido code, Java script
 
 Database: Mongodb
 
