@@ -1,4 +1,4 @@
-<!--patientView.html-->
+<!-- Patient login screen -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,8 +91,9 @@
 </head>
 <body>
     <div class="header">
-        <h1>Welcome, <span id="patientName">Patient</span></h1>
-        <button class="logout-btn" id="logoutBtn">Logout</button>
+        <h1>Welcome, {{ patient.first_name }} {{ patient.last_name }}</h1>
+        <form action="{{ url_for('logout') }}" method="GET">
+        <button class="logout-btn" type="submit">Logout</button>
     </div>
 
     <div class="content">
@@ -115,20 +116,5 @@
         </div>
     </div>
 
-<script>
-    //  Get patient data from localStorage
-    const patientData = JSON.parse(localStorage.getItem("patientData"));
-    if (!patientData) {
-        window.location.href = "PatientLogin.html";
-    } else {
-        document.getElementById("patientName").textContent = patientData.name;
-    }
-
-    //  Logout button clears storage & loops back to login
-    document.getElementById("logoutBtn").addEventListener("click", function() {
-        localStorage.removeItem("patientData");
-        window.location.href = "PatientLogin.html";
-    });
-</script>
 </body>
 </html>

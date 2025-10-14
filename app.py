@@ -28,8 +28,8 @@ def home():
 @app.route("/patientlogin", methods=["GET", "POST"])
 def patient_login():
     if request.method == "POST":
-        opid = request.form.get["opid"]
-        password = request.form.get["password"]
+        opid = request.form.get("opid")
+        password = request.form.get("password")
 
         if not opid or not password:
             return render_template("PatientLogin.html", error="Please Enter Username and Password")
