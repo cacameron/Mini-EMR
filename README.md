@@ -84,7 +84,7 @@ For Windows computer:
     MONGO_URI=mongodb+srv://username:password@cluster0.yexcdb.mongodb.net/
 ```
 ```bash
-  Install the packages from the requirements.txt: pip install <package_name>
+  Install the packages from the requirements.txt: pip install -r requirements.txt
 ```
 ```bash
   Test the connection: py test_connection.py
