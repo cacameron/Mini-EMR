@@ -60,7 +60,13 @@ def patient_view(id):
         patient = patients.find_one({"_id": ObjectId(id)})
         if not patient:
             return "Patient not found", 404
-        return render_template("patientView.html", patient=patient)
+        #gathers data for patientView template
+        patient_data = {
+            "first_name": patient.get("First Name", ""),
+            "last_name": patient.get("Last Name", ""),
+            "opid": patient.get("OPID", "")
+        }
+        return render_template("patientView.html", patient=patient_data)
     except Exception:
         return "Invalid ID", 400
     
