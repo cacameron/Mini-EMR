@@ -103,6 +103,7 @@ def doctor_view(id):
         return redirect(url_for("doctor_login"))
     try:
         doctor = doctors.find_one({"_id": ObjectId(id)})
+        print(f"Doctor found: {doctor}")
         if not doctor:
             return "Doctor not found", 404
         #gathers data for frontend template (doctor side)
@@ -112,7 +113,7 @@ def doctor_view(id):
             "opid": doctor.get("OPID", "")
         }
         return render_template("FrontEnd.html", doctor=doctor_data)
-    except Exception:
+    except Exception as e:
         return "Invalid ID", 400
     
 #logout route for patients    

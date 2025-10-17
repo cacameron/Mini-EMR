@@ -1,83 +1,89 @@
-<!--Dr login page-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Mini EMR – Doctor Login</title>
 <style>
 body {
     font-family: 'Segoe UI', Roboto, sans-serif;
     background-color: #e8f0fe;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #0a66c2;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    height: 100vh;
+    align-items: center;
+    height: 70vh;
 }
-header img {
-    height: 60px;
-    position: absolute;
-    top: 20px;
-    left: 20px;
-}
+
 .login-box {
     background-color: white;
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
     text-align: center;
 }
-input, button {
-    width: 100%;
-    margin-top: 10px;
+
+.login-box h2 {
+    margin-bottom: 20px;
+    color: #0a66c2;
+}
+
+input {
+    width: 90%;
     padding: 10px;
+    margin: 10px 0;
     border-radius: 6px;
+    border: 1px solid #ccc;
     font-size: 16px;
 }
+
 button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
     background-color: #0a66c2;
     color: white;
-    border: none;
     cursor: pointer;
 }
-button:hover { background-color: #004182; }
+
+button:hover {
+    background-color: #004b99;
+}
 </style>
 </head>
 <body>
-<header>
-    <img src="logoForMiniEMR.png" alt="Mini EMR Logo">
-</header>
+<header>Mini EMR – Doctor Login</header>
 
-<div class="login-box">
+<div class="login-container">
     <h2>Doctor Login</h2>
-    <form onsubmit="handleLogin(event)">
-        <input type="text" id="username" placeholder="Username" required>
-        <input type="password" id="password" placeholder="Password" required>
+    <form action="{{ url_for('doctor_login') }}" method="POST">
+        <label for="opid">Username (OPID):</label>
+        <input type="text" id="opid" name="opid" placeholder="Enter username" required />
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter password" required />
+        
         <button type="submit">Login</button>
     </form>
+    <!--Flask Error Display-->
+    {% if error %}
+        <p id="error-message">{{ error }}</p>
+    {% endif %}
 </div>
-
-<script>
-async function handleLogin(event) {
-    event.preventDefault();
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    const res = await fetch("http://127.0.0.1:5000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username, password })
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-        window.location.href = "FrontEnd.html";
-    } else {
-        alert(data.error || "Login failed");
-    }
-}
-</script>
 </body>
 </html>
