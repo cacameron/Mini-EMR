@@ -1,14 +1,68 @@
-<!-- landing page ^_^ -->
+<!-- landing page -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Mini EMR Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8f0fe, #cfd9ff);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px 60px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #1a237e;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .login-links a {
+            display: block;
+            text-decoration: none;
+            background-color: #1a73e8;
+            color: #fff;
+            padding: 12px 0;
+            border-radius: 10px;
+            margin: 12px 0;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .login-links a:hover {
+            background-color: #155ab6;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Mini EMR</h1>
-    <a href="{{ url_for('patient_login') }}">Patient Login</a>
-    <br>
-    <a href="{{ url_for('doctor_login') }}">Doctor Login</a>
+    <div class="container">
+        <h1>Welcome to Mini EMR</h1>
+        <div class="login-links">
+            <a href="{{ url_for('patient_login') }}">Patient Login</a>
+            <a href="{{ url_for('doctor_login') }}">Doctor Login</a>
+        </div>
+        <footer>© 2025 Mini EMR. All rights reserved.</footer>
+    </div>
 </body>
 </html>
