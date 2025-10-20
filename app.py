@@ -1,3 +1,4 @@
+#App.py file
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, session
@@ -81,23 +82,23 @@ def doctor_login():
         password = request.form.get("password")
 
         if not opid or not password:
-            return render_template("login.html", error="Please Enter Username and Password")
+            return render_template("DoctorLogin.html", error="Please Enter Username and Password")
         #find doctor
         doctor = doctors.find_one({"OPID": opid})
         if not doctor:
-            return render_template("login.html", error="Invalid Username or Password")
+            return render_template("DoctorLogin.html", error="Invalid Username or Password")
         stored_hash = doctor.get("Password")
         if not stored_hash:
-            return render_template("login.html", error="No Password Found")
+            return render_template("DoctorLogin.html", error="No Password Found")
         #compares pwd to hash
         if check_password_hash(stored_hash, password):
             session["doctor_id"] = str(doctor["_id"])
             return redirect(url_for("doctor_view", id=str(doctor["_id"])))
         else:
-            return render_template("login.html", error="Invalid Username or Password")
+            return render_template("DoctorLogin.html", error="Invalid Username or Password")
 
     #GET method
-    return render_template("login.html")
+    return render_template("DoctorLogin.html")
 
 @app.route("/doctors/<id>")
 def doctor_view(id):
@@ -115,7 +116,7 @@ def doctor_view(id):
             "last_name": doctor.get("Last Name", ""),
             "opid": doctor.get("OPID", "")
         }
-        return render_template("FrontEnd.html", doctor=doctor_data)
+        return render_template("DoctorView.html", doctor=doctor_data)
     except Exception as e:
         return "Invalid ID", 400
     
