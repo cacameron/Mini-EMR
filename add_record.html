@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Record – Mini EMR</title>
+<style>
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #f4f8fb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: white;
+    border: 2px solid #0a66c2;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 420px;
+    padding: 30px;
+}
+
+h2 {
+    color: #0a66c2;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+    height: 80px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #0a66c2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.2s ease;
+}
+
+button:hover {
+    background-color: #004b99;
+}
+
+a.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #0a66c2;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+a.back-link:hover {
+    text-decoration: underline;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Add Record for {{ patient['First Name'] }} {{ patient['Last Name'] }}</h2>
+
+    <form method="POST">
+        <label for="blood_pressure">Blood Pressure:</label>
+        <input type="text" id="blood_pressure" name="blood_pressure" placeholder="e.g., 120/80" required>
+
+        <label for="temperature">Temperature (°F):</label>
+        <input type="text" id="temperature" name="temperature" placeholder="e.g., 98.6" required>
+
+        <label for="notes">Notes:</label>
+        <textarea id="notes" name="notes" placeholder="Additional comments..."></textarea>
+
+        <button type="submit">Add Record</button>
+    </form>
+
+    <a href="{{ url_for('doctor_view', id=session['doctor_id']) }}" class="back-link">← Back to Dashboard</a>
+</div>
+</body>
+</html>
