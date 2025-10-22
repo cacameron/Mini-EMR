@@ -46,6 +46,7 @@
         align-items: stretch;
         margin: 40px 20px;
         gap: 20px;
+        flex-wrap: wrap;
     }
 
     .section {
@@ -56,6 +57,7 @@
         padding: 20px;
         text-align: center;
         transition: transform 0.2s ease;
+        min-width: 250px;
     }
 
     .section:hover {
@@ -86,6 +88,47 @@
     .section a:hover {
         background-color: #004494;
     }
+
+    /* New patient table section */
+    .patient-list {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin: 30px auto;
+        padding: 20px;
+        width: 90%;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ccc;
+    }
+
+    th {
+        background-color: #0056b3;
+        color: white;
+    }
+
+    .dashboard-link {
+        display: inline-block;
+        background-color: #0056b3;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .dashboard-link:hover {
+        background-color: #003d80;
+    }
 </style>
 </head>
 <body>
@@ -114,6 +157,31 @@
             <p>Schedule or view your upcoming appointments.</p>
             <a href="#">View Appointments</a>
         </div>
+    </div>
+
+    <!-- Patient Table -->
+    <div class="patient-list">
+        <h2>All Patients</h2>
+        <table>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>OPID</th>
+                <th>Actions</th>
+            </tr>
+            {% for patient in patients %}
+            <tr>
+                <td>{{ patient['First Name'] }}</td>
+                <td>{{ patient['Last Name'] }}</td>
+                <td>{{ patient['OPID'] }}</td>
+                <td>
+                    <a href="{{ url_for('add_record', patient_id=patient['_id']) }}" class="dashboard-link">
+                        Add/View Records
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
 </body>
 </html>
