@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Create Account – Mini EMR</title>
+<style>
+    body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #e8f0fe;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    }
+
+    .container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    text-align: center;
+    }
+
+    h2 {
+    margin-bottom: 1rem;
+    color: #333;
+    }
+
+    form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    }
+
+    input {
+    padding: 0.7rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    }
+
+    button {
+    background-color: #0078d7;
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.2s;
+    }
+
+    button:hover {
+    background-color: #005fa3;
+    }
+
+    .link {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    }
+
+    .link a {
+    color: #0078d7;
+    text-decoration: none;
+    }
+
+    .error {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Create Your Account</h2>
+
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('register') }}">
+    <input type="text" name="opid" placeholder="Enter your OPID" required />
+    <input type="password" name="password" placeholder="Enter your password" required />
+    <button type="submit">Create Account</button>
+    </form>
+
+    <div class="link">
+    <p>Already have an account? <a href="{{ url_for('patient_login') }}">Login here</a></p>
+    </div>
+</div>
+</body>
+</html>
