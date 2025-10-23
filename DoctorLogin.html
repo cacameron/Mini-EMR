@@ -1,4 +1,5 @@
 <!--Doctor Login Screen-->
+<!--Screen the Doctor sees when logging in-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,6 +64,7 @@ button {
     transition: background-color 0.2s ease;
 }
 
+/* Sets the background color */
 button:hover {
     background-color: #004b99;
 }
@@ -78,9 +80,11 @@ button:hover {
 <div class="login-container">
     <h2>Doctor Login</h2>
     <form action="{{ url_for('doctor_login') }}" method="POST">
+        <!--Lets the doctor enter there username-->
         <label for="opid">Username (OPID):</label>
         <input type="text" id="opid" name="opid" placeholder="Enter username" required>
 
+        <!--Lets the doctor enter there password-->
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" placeholder="Enter password" required>
 
@@ -90,6 +94,9 @@ button:hover {
     {% if error %}
         <p id="error-message">{{ error }}</p>
     {% endif %}
+
+        <!--  Back to Home button  -->
+    <a href="{{ url_for('home') }}" class="back-button">← Back to Home</a>
 </div>
 </body>
 </html>
