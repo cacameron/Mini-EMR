@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Patient Login – Mini EMR</title>
 <style>
+    /*General page styling*/
 body {
     font-family: 'Segoe UI', Roboto, sans-serif;
     background-color: #e8f0fe;
@@ -16,7 +17,7 @@ body {
     height: 100vh;
     margin: 0;
 }
-
+/*Login container styling*/
 .login-container {
     background-color: white;
     border: 3px solid #0a66c2;
@@ -26,13 +27,13 @@ body {
     text-align: center;
     width: 350px;
 }
-
+/*page title styling*/
 .login-container h2 {
     color: #0a66c2;
     margin-bottom: 25px;
     font-size: 26px;
 }
-
+/*Input Labels styling*/
 label {
     display: block;
     text-align: left;
@@ -41,6 +42,7 @@ label {
     margin-bottom: 8px;
 }
 
+/*Input field styling*/
 input {
     width: 100%;
     padding: 10px;
@@ -50,7 +52,7 @@ input {
     font-size: 15px;
     box-sizing: border-box;
 }
-
+/*Login button styling*/
 button {
     width: 100%;
     padding: 12px;
@@ -63,22 +65,62 @@ button {
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
-
+/* Hover Effect for Login button */
 button:hover {
     background-color: #004b99;
 }
-
+/* Error message styling */
 #error-message {
     color: red;
     margin-top: 15px;
     font-weight: 500;
 }
+
+/* New section for the "Create Account" link */
+.create-account {
+    margin-top: 20px;
+    font-size: 14px;
+}
+/*Link inside the create account section*/
+.create-account a {
+    color: #0a66c2;
+    text-decoration: none;
+    font-weight: 600;
+}
+/* ---- Hover Effect for the Create Account Link ---- */
+.create-account a:hover {
+    text-decoration: underline;
+}
+
+/* Back button style to go home */
+.back-button {
+    margin-top: 15px;
+    display: block;
+    background-color: #f0f0f0;
+    color: #0a66c2;
+    text-decoration: none;
+    border: 2px solid #0a66c2;
+    padding: 10px 0;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+/*Hover effect for back button*/
+.back-button:hover {
+    background-color: #0a66c2;
+    color: white;
+}
 </style>
 </head>
 <body>
+<!--Login Card (Main Container)-->
 <div class="login-container">
+    <!-- Title for login-->
     <h2>Patient Login</h2>
+    <!--Login Form-->
+    <!--Submits user input to Flask route-->
     <form action="{{ url_for('patient_login') }}" method="POST">
+    
         <label for="opid">Username (OPID):</label>
         <input type="text" id="opid" name="opid" placeholder="Enter username" required>
 
@@ -87,9 +129,18 @@ button:hover {
 
         <button type="submit">Login</button>
     </form>
+
     {% if error %}
         <p id="error-message">{{ error }}</p>
     {% endif %}
+
+    <!-- Create Account section -->
+    <div class="create-account">
+        <p>Don’t have an account? <a href="{{ url_for('register') }}">Create one here</a></p>
+    </div>
+
+    <!-- Back to Home button -->
+    <a href="{{ url_for('home') }}" class="back-button">← Back to Home</a>
 </div>
 </body>
 </html>
