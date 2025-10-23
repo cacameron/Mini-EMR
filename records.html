@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account – Mini EMR</title>
+<style>
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #e8f0fe;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.register-container {
+    background-color: white;
+    border: 3px solid #0a66c2;
+    border-radius: 16px;
+    padding: 40px 50px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 350px;
+}
+.register-container h2 {
+    color: #0a66c2;
+    margin-bottom: 25px;
+    font-size: 26px;
+}
+label {
+    display: block;
+    text-align: left;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #0a66c2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+button:hover {
+    background-color: #004b99;
+}
+#error-message {
+    color: red;
+    margin-top: 15px;
+    font-weight: 500;
+}
+</style>
+</head>
+<body>
+<div class="register-container">
+    <h2>Create Account</h2>
+    <form action="{{ url_for('register') }}" method="POST">
+        <label for="opid">Username (OPID):</label>
+        <input type="text" id="opid" name="opid" placeholder="Choose a username" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Choose a password" required>
+
+        <button type="submit">Create Account</button>
+    </form>
+
+    {% if error %}
+        <p id="error-message">{{ error }}</p>
+    {% endif %}
+
+    <p style="margin-top:15px;">Already have an account? <a href="{{ url_for('patient_login') }}">Login here</a></p>
+</div>
+</body>
+</html>
