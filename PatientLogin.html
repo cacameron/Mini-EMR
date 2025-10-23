@@ -1,3 +1,5 @@
+<!--Patient Login Screen-->
+<!--Screen so patient is able to login-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,7 +78,7 @@ button:hover {
 <body>
 <div class="login-container">
     <h2>Patient Login</h2>
-    <form action="{{ url_for('index') }}" method="POST">
+    <form action="{{ url_for('patient_login') }}" method="POST">
         <label for="opid">Username (OPID):</label>
         <input type="text" id="opid" name="opid" placeholder="Enter username" required>
 
@@ -85,7 +87,6 @@ button:hover {
 
         <button type="submit">Login</button>
     </form>
-    <!--Flask Error Display-->
     {% if error %}
         <p id="error-message">{{ error }}</p>
     {% endif %}
