@@ -1,5 +1,4 @@
 # -------------------- app.py --------------------
-#------ Imports needed -------------
 import os
 import random
 import string
@@ -37,30 +36,22 @@ def generate_unique_opid():
 def home():
     return render_template("index.html")
 
-
 # -------------------- Patient Registration --------------------
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """
-    Handles patient registration with automatic OPID generation.
-    Ensures OPID is unique across both patients and doctors.
-    """
+    """Handles patient registration with automatic OPID generation."""
     if request.method == "POST":
         first_name = request.form.get("first_name")
         last_name = request.form.get("last_name")
         password = request.form.get("password")
 
-        # Validate required fields
         if not first_name or not last_name or not password:
-            return render_template("register.html", error="Please fill in all fields.")
+            return render_template("Patient_register.html", error="Please fill in all fields.")
 
         # Generate unique OPID
         opid = generate_unique_opid()
-
-        # Hash password
         hashed_pw = generate_password_hash(password)
 
-        # Create new patient document
         new_patient = {
             "First Name": first_name,
             "Last Name": last_name,
@@ -69,28 +60,21 @@ def register():
             "records": []
         }
 
-        # Insert into MongoDB
         patients.insert_one(new_patient)
 
-        # Show success message and generated OPID
         return render_template(
-            "register_success.html",
+            "Patient_register_success.html",
             first_name=first_name,
             last_name=last_name,
             opid=opid
         )
 
-    return render_template("register.html")
-
+    return render_template("Patient_register.html")
 
 # -------------------- Patient Login --------------------
 @app.route("/patientlogin", methods=["GET", "POST"])
 def patient_login():
-    """
-    Handles patient login.
-    GET: Shows login form.
-    POST: Authenticates user and sets session if successful.
-    """
+    """Handles patient login."""
     if request.method == "POST":
         opid = request.form.get("opid")
         password = request.form.get("password")
@@ -106,20 +90,15 @@ def patient_login():
         if not stored_hash or not check_password_hash(stored_hash, password):
             return render_template("PatientLogin.html", error="Invalid Username or Password")
 
-        # Login success → save session
         session["patient_id"] = str(patient["_id"])
         return redirect(url_for("patient_view", id=str(patient["_id"])))
 
     return render_template("PatientLogin.html")
 
-
 # -------------------- Patient Dashboard --------------------
 @app.route("/patients/<id>")
 def patient_view(id):
-    """
-    Displays patient dashboard.
-    Only accessible if logged in as that patient.
-    """
+    """Displays the patient’s personal dashboard and medical records."""
     if "patient_id" not in session or session["patient_id"] != id:
         return redirect(url_for("patient_login"))
 
@@ -127,22 +106,21 @@ def patient_view(id):
     if not patient:
         return "Patient not found", 404
 
+    # Extract core info and records
     patient_data = {
         "first_name": patient.get("First Name", ""),
         "last_name": patient.get("Last Name", ""),
         "opid": patient.get("OPID", "")
     }
+    records = patient.get("records", [])
 
-    return render_template("patientView.html", patient=patient_data)
-
+    # Pass both separately to the template
+    return render_template("PatientView.html", patient=patient_data, records=records)
 
 # -------------------- Doctor Login --------------------
 @app.route("/doctorlogin", methods=["GET", "POST"])
 def doctor_login():
-    """
-    Handles doctor login.
-    Similar to patient login.
-    """
+    """Handles doctor login."""
     if request.method == "POST":
         opid = request.form.get("opid")
         password = request.form.get("password")
@@ -163,13 +141,10 @@ def doctor_login():
 
     return render_template("DoctorLogin.html")
 
-
 # -------------------- Doctor Dashboard --------------------
 @app.route("/doctors/<id>")
 def doctor_view(id):
-    """
-    Displays all patients to the logged-in doctor.
-    """
+    """Displays all patients to the logged-in doctor."""
     if "doctor_id" not in session or session["doctor_id"] != id:
         return redirect(url_for("doctor_login"))
 
@@ -187,13 +162,10 @@ def doctor_view(id):
 
     return render_template("DoctorView.html", doctor=doctor_data, patients=all_patients)
 
-
 # -------------------- Add Medical Record --------------------
 @app.route("/add_record/<patient_id>", methods=["GET", "POST"])
 def add_record(patient_id):
-    """
-    Allows doctor to add a new medical record for a patient.
-    """
+    """Allows doctor to add a new medical record for a patient."""
     if "doctor_id" not in session:
         return redirect(url_for("doctor_login"))
 
@@ -202,9 +174,15 @@ def add_record(patient_id):
         return "Patient not found", 404
 
     if request.method == "POST":
+        # Retrieve doctor name to attach to record
+        doctor = doctors.find_one({"_id": ObjectId(session["doctor_id"])})
+        doctor_name = f"{doctor.get('First Name', '')} {doctor.get('Last Name', '')}"
+
         new_record = {
             "date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "doctor_name": doctor_name,
             "blood_pressure": request.form.get("blood_pressure"),
+            "heart_rate": request.form.get("heart_rate"),
             "temperature": request.form.get("temperature"),
             "notes": request.form.get("notes")
         }
@@ -218,13 +196,10 @@ def add_record(patient_id):
 
     return render_template("add_record.html", patient=patient)
 
-
 # -------------------- Patient View Records --------------------
 @app.route("/view_records/<id>")
 def view_records(id):
-    """
-    Allows a patient to view their own medical records.
-    """
+    """Allows a patient to view their own medical records."""
     if "patient_id" not in session or session["patient_id"] != id:
         return redirect(url_for("patient_login"))
 
@@ -233,8 +208,7 @@ def view_records(id):
         return "Patient not found", 404
 
     records = patient.get("records", [])
-    return render_template("view_records.html", patient=patient, records=records)
-
+    return render_template("PatientView.html", patient=patient, records=records)
 
 # -------------------- Logout Routes --------------------
 @app.route("/logout")
@@ -243,13 +217,11 @@ def logout():
     session.clear()
     return redirect(url_for("patient_login"))
 
-
 @app.route("/doctorlogout")
 def doctor_logout():
     """Logs out doctor by removing doctor_id from session."""
     session.pop("doctor_id", None)
     return redirect(url_for("doctor_login"))
-
 
 # -------------------- Run Flask App --------------------
 if __name__ == "__main__":
