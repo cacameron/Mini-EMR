@@ -12,9 +12,9 @@ We decided to do a Mini-EMR because we wanted to help gear something towards sma
 
 ## Tech Stack:
 
-Front End: HTML, CSS and Java scritpt
+Front End: HTML, CSS and Java Scritpt
 
-Back end: python, Java script
+Back end: Python
 
 Database: Mongodb
 
@@ -110,7 +110,4 @@ Once you click that it will take you into a webrowser on your computer
 
 
 
-
-
-![Logo](https://github.com/cacameron/Mini-EMR)
 
