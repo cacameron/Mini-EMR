@@ -107,7 +107,7 @@ Once you click that it will take you into a webrowser on your computer
 ```bash
   Sign in to the according one and view the records
 ```
-https://github.com/cacameron/Mini-EMR/blob/51a560cdeeccfbf1fba0c1fe07866bb40586d153/logoForMiniEMR.png
+<img width="400" height="400" alt="logoForMiniEMR" src="https://github.com/user-attachments/assets/9de0a7d5-fb52-4923-81c6-f3fd3c66cd79" />
 
 
 
