@@ -1,64 +1,118 @@
-<!-- register_success.html -->
+<!-- Patient_register_success.html -->
+<!-- 
+This page is displayed after a patient successfully registers on the EMR (Electronic Medical Record) system.
+It confirms successful registration and provides the patient's unique OPID (Outpatient ID).
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Registration Successful</title>
-<style>
-    body {
-        font-family: 'Segoe UI', Roboto, sans-serif;
-        background-color: #e8f0fe;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-    }
+    <meta charset="UTF-8" />
+    <!-- Ensures the page scales correctly on all devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Successful</title>
 
-    .container {
-        background-color: white;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        width: 400px;
-        text-align: center;
-    }
+    <style>
+        /* 
+        General body styling:
+        - Uses a modern sans-serif font family for clean UI
+        - Centers the content horizontally and vertically
+        - Applies a soft blue background color for a friendly, clinical look
+        */
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: #e8f0fe;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Ensures full viewport height */
+            margin: 0;
+        }
 
-    h2 {
-        color: #0078d7;
-    }
+        /* 
+        Main container box styling:
+        - White background for contrast against the blue backdrop
+        - Rounded corners and shadow for a subtle card-like effect
+        - Fixed width and centered text for readability
+        */
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
 
-    p {
-        font-size: 1rem;
-        color: #333;
-    }
+        /* Heading styling:
+        - Blue color aligns with healthcare theme
+        - Provides a visual cue for success
+        */
+        h2 {
+            color: #0078d7;
+        }
 
-    .opid {
-        background: #f1f5ff;
-        border: 1px solid #0078d7;
-        padding: 0.5rem;
-        border-radius: 5px;
-        font-weight: bold;
-        display: inline-block;
-        margin-top: 10px;
-    }
+        /* Paragraph styling for general text */
+        p {
+            font-size: 1rem;
+            color: #333;
+        }
 
-    a {
-        color: #0078d7;
-        text-decoration: none;
-        font-weight: bold;
-    }
-</style>
+        /* 
+        Styling for the OPID (unique patient ID):
+        - Light blue background with blue border to highlight importance
+        - Rounded corners and bold text make it stand out
+        */
+        .opid {
+            background: #f1f5ff;
+            border: 1px solid #0078d7;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* 
+        Link styling:
+        - Matches theme color
+        - Bold to indicate action
+        - No underline for a clean button-like appearance
+        */
+        a {
+            color: #0078d7;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Optional: You could add hover feedback to improve UX */
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
+
 <body>
-<div class="container">
-    <h2>Registration Successful 🎉</h2>
-    <p>Welcome, {{ first_name }} {{ last_name }}!</p>
-    <p>Your unique OPID is:</p>
-    <div class="opid">{{ opid }}</div>
-    <p>Please save this ID — you’ll need it to log in.</p>
-    <a href="{{ url_for('patient_login') }}">Go to Login</a>
-</div>
+    <!-- 
+    Main container holds the registration success message.
+    The Flask template variables (e.g., {{ first_name }}, {{ opid }}) will be replaced dynamically at runtime.
+    -->
+    <div class="container">
+        <!-- Success heading -->
+        <h2>Registration Successful 🎉</h2>
+
+        <!-- Display patient's first and last name -->
+        <p>Welcome, {{ first_name }} {{ last_name }}!</p>
+
+        <!-- Display unique Outpatient ID -->
+        <p>Your unique OPID is:</p>
+        <div class="opid">{{ opid }}</div>
+
+        <!-- Reminder to save OPID for future login -->
+        <p>Please save this ID — you’ll need it to log in.</p>
+
+        <!-- Redirect link to patient login page -->
+        <a href="{{ url_for('patient_login') }}">Go to Login</a>
+    </div>
 </body>
 </html>
