@@ -1,155 +1,215 @@
-<!--Patient Login Screen-->
-<!--Screen so patient is able to login-->
+<!-- Patient Login Screen -->
+<!-- 
+This page allows a registered patient to log into the Mini EMR system.
+Patients authenticate using their unique OPID (username) and password.
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Patient Login – Mini EMR</title>
-<style>
-/*General page styling*/
-body {
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    background-color: #e8f0fe;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
+    <meta charset="UTF-8">
+    <!-- Ensures responsive design across all devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Login – Mini EMR</title>
 
-/*Login container styling*/
-.login-container {
-    background-color: white;
-    border: 3px solid #0a66c2;
-    border-radius: 16px;
-    padding: 40px 50px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    text-align: center;
-    width: 350px;
-}
+    <style>
+        /* 
+        GENERAL PAGE STYLING
+        - Uses modern sans-serif font
+        - Centers login card both vertically and horizontally
+        - Light blue background matches EMR theme
+        */
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: #e8f0fe;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Occupies full viewport height */
+            margin: 0;
+        }
 
-/*page title styling*/
-.login-container h2 {
-    color: #0a66c2;
-    margin-bottom: 25px;
-    font-size: 26px;
-}
+        /* 
+        LOGIN CONTAINER CARD
+        - White rounded box with drop shadow
+        - Blue border accentuates focus area
+        - Balanced padding for content spacing
+        */
+        .login-container {
+            background-color: white;
+            border: 3px solid #0a66c2;
+            border-radius: 16px;
+            padding: 40px 50px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            width: 350px;
+        }
 
-/*Input Labels styling*/
-label {
-    display: block;
-    text-align: left;
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
+        /* 
+        PAGE TITLE STYLING
+        - Blue color aligns with Mini EMR theme
+        - Larger font size emphasizes heading
+        */
+        .login-container h2 {
+            color: #0a66c2;
+            margin-bottom: 25px;
+            font-size: 26px;
+        }
 
-/*Input field styling*/
-input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-    box-sizing: border-box;
-}
+        /* 
+        INPUT LABELS
+        - Left-aligned for clarity
+        - Bold and dark color for good contrast
+        */
+        label {
+            display: block;
+            text-align: left;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
 
-/*Login button styling*/
-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #0a66c2;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
+        /* 
+        INPUT FIELDS
+        - Full width for alignment
+        - Rounded corners and padding for comfort
+        - Soft gray border for subtle outline
+        */
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+            box-sizing: border-box; /* Prevents padding from affecting total width */
+        }
 
-/* Hover Effect for Login button */
-button:hover {
-    background-color: #004b99;
-}
+        /* 
+        LOGIN BUTTON
+        - Full-width primary action button
+        - Blue background with white text
+        - Rounded corners and bold font
+        */
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0a66c2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease; /* Smooth hover transition */
+        }
 
-/* Error message styling */
-#error-message {
-    color: red;
-    margin-top: 15px;
-    font-weight: 500;
-}
+        /* Hover effect for login button: darker blue tone */
+        button:hover {
+            background-color: #004b99;
+        }
 
-/* New section for the "Create Account" link */
-.create-account {
-    margin-top: 20px;
-    font-size: 14px;
-}
+        /* 
+        ERROR MESSAGE DISPLAY
+        - Red text to draw attention
+        - Shown if Flask returns an error (e.g., wrong password or missing OPID)
+        */
+        #error-message {
+            color: red;
+            margin-top: 15px;
+            font-weight: 500;
+        }
 
-/*Link inside the create account section*/
-.create-account a {
-    color: #0a66c2;
-    text-decoration: none;
-    font-weight: 600;
-}
+        /* 
+        CREATE ACCOUNT SECTION
+        - Provides navigation link for unregistered users
+        */
+        .create-account {
+            margin-top: 20px;
+            font-size: 14px;
+        }
 
-/* ---- Hover Effect for the Create Account Link ---- */
-.create-account a:hover {
-    text-decoration: underline;
-}
+        /* 
+        LINK STYLING WITHIN CREATE ACCOUNT SECTION
+        - Blue link text consistent with theme
+        - Bold for emphasis
+        */
+        .create-account a {
+            color: #0a66c2;
+            text-decoration: none;
+            font-weight: 600;
+        }
 
-/* Back button style to go home */
-.back-button {
-    margin-top: 15px;
-    display: block;
-    background-color: #f0f0f0;
-    color: #0a66c2;
-    text-decoration: none;
-    border: 2px solid #0a66c2;
-    padding: 10px 0;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
+        /* Underline link on hover for visual feedback */
+        .create-account a:hover {
+            text-decoration: underline;
+        }
 
-/*Hover effect for back button*/
-.back-button:hover {
-    background-color: #0a66c2;
-    color: white;
-}
-</style>
+        /* 
+        BACK BUTTON
+        - Navigates back to home/index page
+        - Light gray with blue border to look like a secondary button
+        */
+        .back-button {
+            margin-top: 15px;
+            display: block;
+            background-color: #f0f0f0;
+            color: #0a66c2;
+            text-decoration: none;
+            border: 2px solid #0a66c2;
+            padding: 10px 0;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        /* Hover transition for back button: inverted color scheme */
+        .back-button:hover {
+            background-color: #0a66c2;
+            color: white;
+        }
+    </style>
 </head>
+
 <body>
-<!--Login Card (Main Container)-->
-<div class="login-container">
-    <!-- Title for login-->
-    <h2>Patient Login</h2>
-    <!--Login Form-->
-    <!--Submits user input to Flask route-->
-    <form action="{{ url_for('patient_login') }}" method="POST">
-    
-        <label for="opid">Username (OPID):</label>
-        <input type="text" id="opid" name="opid" placeholder="Enter your OPID" required>
+    <!-- 
+    MAIN LOGIN CARD
+    - Contains form, title, error messages, and navigation links
+    -->
+    <div class="login-container">
+        <!-- Page title -->
+        <h2>Patient Login</h2>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        <!-- LOGIN FORM -->
+        <!-- Submits patient credentials to Flask route 'patient_login' for verification -->
+        <form action="{{ url_for('patient_login') }}" method="POST">
+            
+            <!-- Username field (uses patient’s OPID) -->
+            <label for="opid">Username (OPID):</label>
+            <input type="text" id="opid" name="opid" placeholder="Enter your OPID" required>
 
-        <button type="submit">Login</button>
-    </form>
+            <!-- Password field -->
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
-    {% if error %}
-        <p id="error-message">{{ error }}</p>
-    {% endif %}
+            <!-- Login button -->
+            <button type="submit">Login</button>
+        </form>
 
-    <!-- Create Account section -->
-    <div class="create-account">
-        <p>Don’t have a patient account? <a href="{{ url_for('register') }}">Create one here</a></p>
+        <!-- Conditional Flask block: displays if backend sends error (e.g., invalid credentials) -->
+        {% if error %}
+            <p id="error-message">{{ error }}</p>
+        {% endif %}
+
+        <!-- CREATE ACCOUNT SECTION -->
+        <!-- Redirects to registration page for new patients -->
+        <div class="create-account">
+            <p>Don’t have a patient account? <a href="{{ url_for('register') }}">Create one here</a></p>
+        </div>
+
+        <!-- BACK BUTTON -->
+        <!-- Takes user back to the main index/home screen -->
+        <a href="{{ url_for('home') }}" class="back-button">← Back to Home</a>
     </div>
-
-    <!-- Back to Home button -->
-    <a href="{{ url_for('home') }}" class="back-button">← Back to Home</a>
-</div>
 </body>
 </html>
