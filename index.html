@@ -1,68 +1,92 @@
 <!--Index File-->
-<!--file for choosing Doctor or Patient View-->
+<!--
+    This is the main landing page for the Mini EMR system.
+    From here, users can choose to log in as either a Doctor or a Patient.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Page title displayed in the browser tab -->
     <title>Mini EMR Login</title>
+
     <style>
+        /* ------------------ GLOBAL PAGE STYLING ------------------ */
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #e8f0fe, #cfd9ff);
-            height: 100vh;
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #e8f0fe, #cfd9ff); 
+            height: 100vh;      
             margin: 0;
-            display: flex;
+            display: flex;                
             justify-content: center;
             align-items: center;
         }
 
+        /* ------------------ CONTAINER CARD ------------------ */
         .container {
-            background-color: #fff;
-            padding: 40px 60px;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
+            background-color: #fff;      
+            padding: 40px 60px;           
+            border-radius: 20px;         
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); 
+            text-align: center;         
+            max-width: 400px;             
+            width: 90%;                   
         }
 
+        /* ------------------ PAGE HEADER ------------------ */
         h1 {
-            color: #1a237e;
+            color: #1a237e;               
             margin-bottom: 30px;
-            font-size: 28px;
+            font-size: 28px;              
         }
 
+        /* ------------------ LOGIN LINK BUTTONS ------------------ */
         .login-links a {
-            display: block;
+            display: block;               
             text-decoration: none;
-            background-color: #1a73e8;
-            color: #fff;
+            background-color: #1a73e8;   
+            color: #fff;                  
             padding: 12px 0;
             border-radius: 10px;
             margin: 12px 0;
-            font-weight: 600;
+            font-weight: 600;            
             transition: all 0.2s ease-in-out;
         }
 
+        /* Button hover animation */
         .login-links a:hover {
-            background-color: #155ab6;
-            transform: translateY(-2px);
+            background-color: #155ab6;    
+            transform: translateY(-2px);  
         }
 
+        /* ------------------ FOOTER ------------------ */
         footer {
             margin-top: 25px;
             font-size: 13px;
-            color: #777;
+            color: #777;                  
         }
     </style>
 </head>
+
 <body>
+    <!--
+        This section is what the user sees upon visiting the site.
+        It provides two navigation options: Patient Login or Doctor Login.
+    -->
     <div class="container">
+        <!-- Welcome heading -->
         <h1>Welcome to Mini EMR</h1>
+
+        <!-- Navigation links to different login routes -->
         <div class="login-links">
+            <!-- Flask templating: dynamically generates correct URL for patient login route -->
             <a href="{{ url_for('patient_login') }}">Patient Login</a>
+
+            <!-- Flask templating: dynamically generates correct URL for doctor login route -->
             <a href="{{ url_for('doctor_login') }}">Doctor Login</a>
         </div>
+
+        <!-- Footer for branding or copyright -->
         <footer>© 2025 Mini EMR. All rights reserved.</footer>
     </div>
 </body>
