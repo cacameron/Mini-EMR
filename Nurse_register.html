@@ -1,0 +1,147 @@
+<!--nurse_register-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <!-- Ensures the layout scales properly on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Page title shown on browser tab -->
+    <title>Create Doctor Account – Mini EMR</title>
+
+    <style>
+        /* ------------------ GLOBAL STYLES ------------------ */
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8f0fe, #cfd9ff);
+            height: 100vh;
+            margin: 0;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ------------------ MAIN FORM CONTAINER ------------------ */
+        .container {
+            background-color: #fff; 
+            padding: 40px 60px;
+            border-radius: 20px; 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); 
+            text-align: center;
+            max-width: 400px;
+            width: 90%; 
+        }
+
+        /* ------------------ HEADER TITLE ------------------ */
+        h2 {
+            color: #1a237e; 
+            margin-bottom: 25px;
+            font-size: 26px;
+        }
+
+        /* ------------------ FORM LAYOUT ------------------ */
+        form {
+            display: flex;
+            flex-direction: column; 
+            gap: 0.9rem; 
+        }
+
+        /* ------------------ INPUT FIELDS ------------------ */
+        input {
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+
+        /* ------------------ SUBMIT BUTTON ------------------ */
+        button {
+            background-color: #1a73e8; 
+            color: white;
+            border: none;
+            padding: 12px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s ease-in-out;
+            margin-top: 5px;
+        }
+
+        /* Hover animation for button */
+        button:hover {
+            background-color: #155ab6;
+            transform: translateY(-2px); 
+        }
+
+        /* ------------------ LOGIN LINK SECTION ------------------ */
+        .link {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .link a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .link a:hover {
+            text-decoration: underline; 
+        }
+
+        /* ------------------ ERROR MESSAGE ------------------ */
+        .error {
+            color: red;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+
+        /* ------------------ FOOTER ------------------ */
+        footer {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Page heading -->
+        <h2>Create Your Nurse Account</h2>
+
+        <!-- Flask block: Display error message if registration fails -->
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <!-- Registration form: Sends POST data to nurse_register route -->
+        <form method="POST" action="{{ url_for('nurse_register') }}">
+            <!-- Nurse's first name -->
+            <input type="text" name="first_name" placeholder="Enter your First Name" required />
+
+            <!-- Nurse's last name -->
+            <input type="text" name="last_name" placeholder="Enter your Last Name" required />
+
+            <!-- Password field -->
+            <input type="password" name="password" placeholder="Enter your Password" required />
+
+            <!-- Form submission button -->
+            <button type="submit">Create Account</button>
+        </form>
+
+        <!-- Link for existing nurses   to log in -->
+        <div class="link">
+            <p>Already have an account? 
+                <a href="{{ url_for('nurse_login') }}">Login here</a>
+            </p>
+        </div>
+
+        <!-- Simple footer note -->
+        <footer>© 2025 Mini EMR. All rights reserved.</footer>
+    </div>
+</body>
+</html>
+
