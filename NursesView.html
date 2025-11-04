@@ -1,0 +1,80 @@
+<!-- NursesView.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nurse Dashboard – Mini EMR</title>
+<style>
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #f4f8fb;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    width: 90%;
+    max-width: 900px;
+    background-color: white;
+    margin: 40px auto;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+h2 {
+    text-align: center;
+    color: #0a66c2;
+    margin-bottom: 25px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+th {
+    background-color: #0a66c2;
+    color: white;
+}
+.button {
+    background-color: #0a66c2;
+    color: white;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 6px;
+}
+.button:hover {
+    background-color: #004b99;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Welcome, Nurse {{ nurse['First Name'] }} {{ nurse['Last Name'] }}</h2>
+    <table>
+        <tr>
+            <th>Patient Name</th>
+            <th>Actions</th>
+        </tr>
+        {% for patient in patients %}
+        <tr>
+            <td>{{ patient['First Name'] }} {{ patient['Last Name'] }}</td>
+            <td>
+                <!-- Add Record button -->
+                <a href="{{ url_for('add_record', patient_id=patient['_id']) }}" class="button">Add Record</a>
+
+                <!-- View Records button -->
+                <a href="{{ url_for('view_records', patient_id=patient['_id']) }}" class="button" style="background-color:#4caf50;">View Records</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Logout link -->
+    <a href="{{ url_for('logout') }}" style="display:block; margin-top:20px; color:#0a66c2; text-decoration:none; font-weight:600;">Logout</a>
+</div>
+</body>
+</html>
