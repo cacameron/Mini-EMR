@@ -16,76 +16,45 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_key")
 
 # -------------------- Connect to MongoDB --------------------
-mongo_uri = os.getenv("MONGO_URI")
+mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
 client = MongoClient(mongo_uri)
 db = client["Mini_Emr_db"]
+
+# Collections
 patients = db["Patients"]
 doctors = db["Doctors"]
+nurses = db["Nurses"]
+records = db["Records"]
 
-# -------------------- Helper: Generate Unique OPIDs --------------------
-def generate_unique_patient_opid():
-    """Generate a unique OPID for patients that doesn't overlap with doctors."""
+# -------------------- Helper Functions --------------------
+def generate_unique_opid(prefix, collection):
+    """Generate unique OPID for given collection."""
     while True:
-        opid = "OP" + "".join(random.choices("0123456789", k=5))
-        if not patients.find_one({"OPID": opid}) and not doctors.find_one({"OPID": opid}):
+        opid = prefix + "".join(random.choices("0123456789", k=5))
+        if not collection.find_one({"OPID": opid}):
             return opid
 
-def generate_unique_doctor_opid():
-    """Generate a unique OPID for doctors that doesn't overlap with patients."""
-    while True:
-        opid = "DR" + "".join(random.choices("0123456789", k=5))
-        if not doctors.find_one({"OPID": opid}) and not patients.find_one({"OPID": opid}):
-            return opid
-
-# -------------------- Doctor Functions --------------------
-def add_doctor(first_name, last_name, password):
-    """Insert a new doctor into the Doctors collection."""
-    opid = generate_unique_doctor_opid()
-    hashed_pw = generate_password_hash(password)
-    doctors.insert_one({
-        "First Name": first_name,
-        "Last Name": last_name,
-        "OPID": opid,
-        "Password": hashed_pw
-    })
-    return opid
-
-def authenticate_doctor(opid, password):
-    """Authenticate a doctor."""
-    doctor = doctors.find_one({"OPID": opid})
-    if doctor and check_password_hash(doctor["Password"], password):
-        return doctor
-    return None
-
-def get_doctor_by_id(id):
-    """Retrieve a doctor by ObjectId."""
-    return doctors.find_one({"_id": id})
-
-# -------------------- Home Route --------------------
+# -------------------- Home Page --------------------
 @app.route("/")
-def home():
+def index():
     return render_template("index.html")
 
-# -------------------- Patient Registration --------------------
+# -------------------- PATIENT SECTION --------------------
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        first_name = request.form.get("first_name")
-        last_name = request.form.get("last_name")
-        password = request.form.get("password")
+        first_name = request.form["first_name"]
+        last_name = request.form["last_name"]
+        password = request.form["password"]
 
-        if not first_name or not last_name or not password:
-            return render_template("Patient_register.html", error="Please fill in all fields.")
-
-        opid = generate_unique_patient_opid()
+        opid = generate_unique_opid("OP", patients)
         hashed_pw = generate_password_hash(password)
 
         patients.insert_one({
             "First Name": first_name,
             "Last Name": last_name,
             "OPID": opid,
-            "Password": hashed_pw,
-            "records": []
+            "Password": hashed_pw
         })
 
         return render_template(
@@ -96,23 +65,23 @@ def register():
         )
     return render_template("Patient_register.html")
 
-# -------------------- Patient Login --------------------
+
 @app.route("/patientlogin", methods=["GET", "POST"])
 def patient_login():
     if request.method == "POST":
-        opid = request.form.get("opid")
-        password = request.form.get("password")
+        opid = request.form["opid"]
+        password = request.form["password"]
 
         patient = patients.find_one({"OPID": opid})
-        if not patient or not check_password_hash(patient.get("Password", ""), password):
-            return render_template("PatientLogin.html", error="Invalid Username or Password")
+        if not patient or not check_password_hash(patient["Password"], password):
+            return render_template("PatientLogin.html", error="Invalid ID or password")
 
         session.clear()
         session["patient_id"] = str(patient["_id"])
         return redirect(url_for("patient_view", id=str(patient["_id"])))
     return render_template("PatientLogin.html")
 
-# -------------------- Patient Dashboard --------------------
+
 @app.route("/patients/<id>")
 def patient_view(id):
     if "patient_id" not in session or session["patient_id"] != id:
@@ -122,106 +91,171 @@ def patient_view(id):
     if not patient:
         return "Patient not found", 404
 
-    return render_template("PatientView.html",
-    patient={
-    "first_name": patient.get("First Name", ""),
-    "last_name": patient.get("Last Name", ""),
-    "opid": patient.get("OPID", "")
-    },
-    records=patient.get("records", []))
+    patient_records = list(records.find({"patient_id": ObjectId(id)}))
+    return render_template("PatientView.html", patient=patient, records=patient_records)
 
-# -------------------- Doctor Registration --------------------
+# -------------------- DOCTOR SECTION --------------------
 @app.route("/doctorregister", methods=["GET", "POST"])
 def doctor_register():
     if request.method == "POST":
-        first_name = request.form.get("first_name")
-        last_name = request.form.get("last_name")
-        password = request.form.get("password")
+        first_name = request.form["first_name"]
+        last_name = request.form["last_name"]
+        password = request.form["password"]
 
-        if not first_name or not last_name or not password:
-            return render_template("Doctor_register.html", error="Please fill in all fields.")
+        opid = generate_unique_opid("DR", doctors)
+        hashed_pw = generate_password_hash(password)
 
-        opid = add_doctor(first_name, last_name, password)
+        doctors.insert_one({
+            "First Name": first_name,
+            "Last Name": last_name,
+            "OPID": opid,
+            "Password": hashed_pw
+        })
 
-        return render_template("Doctor_register_success.html",
-        first_name=first_name,
-        last_name=last_name,
-        opid=opid)
+        return render_template(
+            "Doctor_register_success.html",
+            first_name=first_name,
+            last_name=last_name,
+            opid=opid
+        )
     return render_template("Doctor_register.html")
 
-# -------------------- Doctor Login --------------------
+
 @app.route("/doctorlogin", methods=["GET", "POST"])
 def doctor_login():
     if request.method == "POST":
-        opid = request.form.get("opid")
-        password = request.form.get("password")
+        opid = request.form["opid"]
+        password = request.form["password"]
 
-        doctor = authenticate_doctor(opid, password)
-        if not doctor:
-            return render_template("DoctorLogin.html", error="Invalid Username or Password")
+        doctor = doctors.find_one({"OPID": opid})
+        if not doctor or not check_password_hash(doctor["Password"], password):
+            return render_template("DoctorLogin.html", error="Invalid ID or password")
 
         session.clear()
         session["doctor_id"] = str(doctor["_id"])
         return redirect(url_for("doctor_view", id=str(doctor["_id"])))
     return render_template("DoctorLogin.html")
 
-# -------------------- Doctor Dashboard --------------------
+
 @app.route("/doctors/<id>")
 def doctor_view(id):
     if "doctor_id" not in session or session["doctor_id"] != id:
         return redirect(url_for("doctor_login"))
 
-    doctor = get_doctor_by_id(ObjectId(id))
-    if not doctor:
-        return "Doctor not found", 404
-
+    doctor = doctors.find_one({"_id": ObjectId(id)})
     all_patients = list(patients.find())
+    return render_template("DoctorView.html", doctor=doctor, patients=all_patients)
 
-    return render_template("DoctorView.html",
-        doctor={
-            "first_name": doctor.get("First Name", ""),
-            "last_name": doctor.get("Last Name", ""),
-            "opid": doctor.get("OPID", "")
-        },
-        patients=all_patients)
+# -------------------- NURSE SECTION --------------------
+@app.route("/nurseregister", methods=["GET", "POST"])
+def nurse_register():
+    if request.method == "POST":
+        first_name = request.form["first_name"]
+        last_name = request.form["last_name"]
+        password = request.form["password"]
 
-# -------------------- Add Medical Record --------------------
+        nid = generate_unique_opid("NR", nurses)
+        hashed_pw = generate_password_hash(password)
+
+        nurses.insert_one({
+            "First Name": first_name,
+            "Last Name": last_name,
+            "NID": nid,
+            "Password": hashed_pw
+        })
+
+        return render_template(
+            "nurse_register_success.html",
+            first_name=first_name,
+            last_name=last_name,
+            opid=nid
+        )
+    return render_template("nurse_register.html")
+
+
+@app.route("/nurselogin", methods=["GET", "POST"])
+def nurse_login():
+    if request.method == "POST":
+        nid = request.form["nid"]
+        password = request.form["password"]
+
+        nurse = nurses.find_one({"NID": nid})
+        if not nurse or not check_password_hash(nurse["Password"], password):
+            return render_template("NurseLogin.html", error="Invalid ID or password")
+
+        session.clear()
+        session["nurse_id"] = str(nurse["_id"])
+        return redirect(url_for("nurse_view", id=str(nurse["_id"])))
+    return render_template("NurseLogin.html")
+
+
+@app.route("/nurses/<id>")
+def nurse_view(id):
+    if "nurse_id" not in session or session["nurse_id"] != id:
+        return redirect(url_for("nurse_login"))
+
+    nurse = nurses.find_one({"_id": ObjectId(id)})
+    all_patients = list(patients.find())
+    return render_template("NursesView.html", nurse=nurse, patients=all_patients)
+
+# -------------------- SHARED RECORD SYSTEM --------------------
 @app.route("/add_record/<patient_id>", methods=["GET", "POST"])
 def add_record(patient_id):
-    if "doctor_id" not in session:
-        return redirect(url_for("doctor_login"))
+    if "doctor_id" not in session and "nurse_id" not in session:
+        return redirect(url_for("index"))
 
     patient = patients.find_one({"_id": ObjectId(patient_id)})
     if not patient:
         return "Patient not found", 404
 
     if request.method == "POST":
-        doctor = get_doctor_by_id(ObjectId(session["doctor_id"]))
-        new_record = {
-            "date": datetime.now().strftime("%Y-%m-%d %H:%M"),
-            "doctor_name": f"{doctor.get('First Name', '')} {doctor.get('Last Name', '')}",
-            "blood_pressure": request.form.get("blood_pressure"),
-            "heart_rate": request.form.get("heart_rate"),
-            "temperature": request.form.get("temperature"),
-            "notes": request.form.get("notes")
+        if "doctor_id" in session:
+            role = "doctor"
+            user = doctors.find_one({"_id": ObjectId(session["doctor_id"])})
+            added_by = f"Dr. {user['First Name']} {user['Last Name']}"
+        else:
+            role = "nurse"
+            user = nurses.find_one({"_id": ObjectId(session["nurse_id"])})
+            added_by = f"Nurse {user['First Name']} {user['Last Name']}"
+
+        record = {
+            "patient_id": ObjectId(patient_id),
+            "blood_pressure": request.form["blood_pressure"],
+            "temperature": request.form["temperature"],
+            "heart_rate": request.form["heart_rate"],
+            "notes": request.form["notes"],
+            "date_added": datetime.now(),
+            "added_by": {"role": role, "name": added_by}
         }
 
-        patients.update_one({"_id": ObjectId(patient_id)}, {"$push": {"records": new_record}})
-        return redirect(url_for("doctor_view", id=session["doctor_id"]))
+        records.insert_one(record)
+
+        if "doctor_id" in session:
+            return redirect(url_for("doctor_view", id=session["doctor_id"]))
+        else:
+            return redirect(url_for("nurse_view", id=session["nurse_id"]))
 
     return render_template("add_record.html", patient=patient)
 
-# -------------------- Logout Routes --------------------
+
+@app.route("/view_records/<patient_id>")
+def view_records(patient_id):
+    if "doctor_id" not in session and "nurse_id" not in session and "patient_id" not in session:
+        return redirect(url_for("index"))
+
+    patient = patients.find_one({"_id": ObjectId(patient_id)})
+    if not patient:
+        return "Patient not found", 404
+
+    patient_records = list(records.find({"patient_id": ObjectId(patient_id)}))
+    return render_template("view_records.html", patient=patient, records=patient_records)
+
+# -------------------- LOGOUT --------------------
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("patient_login"))
+    return redirect(url_for("index"))
 
-@app.route("/doctorlogout")
-def doctor_logout():
-    session.pop("doctor_id", None)
-    return redirect(url_for("doctor_login"))
-
-# -------------------- Run Flask App --------------------
+# -------------------- RUN FLASK APP --------------------
 if __name__ == "__main__":
     app.run(debug=True)
