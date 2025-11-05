@@ -152,7 +152,7 @@ th {
         <h1>Welcome, {{ doctor.first_name }} {{ doctor.last_name }}</h1>
 
         <!-- Logout form to end doctor session -->
-        <form action="{{ url_for('doctor_logout') }}" method="GET">
+        <form action="{{ url_for('logout') }}" method="GET">
             <button class="logout-btn" type="submit">Logout</button>
         </form>
     </div>
