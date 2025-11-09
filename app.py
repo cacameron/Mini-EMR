@@ -208,47 +208,79 @@ def add_record(patient_id):
     if not patient:
         return "Patient not found", 404
 
+    existing_records = list(records.find({"patient_id": ObjectId(patient_id)}))
+
     if request.method == "POST":
         if "doctor_id" in session:
-            role = "doctor"
             user = doctors.find_one({"_id": ObjectId(session["doctor_id"])})
             added_by = f"Dr. {user['First Name']} {user['Last Name']}"
+            role = "doctor"
         else:
-            role = "nurse"
             user = nurses.find_one({"_id": ObjectId(session["nurse_id"])})
             added_by = f"Nurse {user['First Name']} {user['Last Name']}"
+            role = "nurse"
 
-        record = {
+        new_record = {
             "patient_id": ObjectId(patient_id),
             "blood_pressure": request.form["blood_pressure"],
             "temperature": request.form["temperature"],
             "heart_rate": request.form["heart_rate"],
             "notes": request.form["notes"],
-            "date_added": datetime.now(),
-            "added_by": {"role": role, "name": added_by}
+            "date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "added_by": added_by,
+            "role": role,
         }
 
-        records.insert_one(record)
+        records.insert_one(new_record)
 
-        if "doctor_id" in session:
+        if role == "doctor":
             return redirect(url_for("doctor_view", id=session["doctor_id"]))
         else:
             return redirect(url_for("nurse_view", id=session["nurse_id"]))
 
-    return render_template("add_record.html", patient=patient)
+    return render_template(
+        "add_record.html",
+        patient=patient,
+        records=existing_records,
+        doctor_id=session.get("doctor_id"),
+        nurse_id=session.get("nurse_id")
+    )
 
 
-@app.route("/view_records/<patient_id>")
-def view_records(patient_id):
-    if "doctor_id" not in session and "nurse_id" not in session and "patient_id" not in session:
-        return redirect(url_for("index"))
+@app.route("/edit_record/<record_id>", methods=["GET", "POST"])
+def edit_record(record_id):
+    record = records.find_one({"_id": ObjectId(record_id)})
+    if not record:
+        return "Record not found", 404
 
-    patient = patients.find_one({"_id": ObjectId(patient_id)})
+    patient = patients.find_one({"_id": record["patient_id"]})
     if not patient:
         return "Patient not found", 404
 
-    patient_records = list(records.find({"patient_id": ObjectId(patient_id)}))
-    return render_template("view_records.html", patient=patient, records=patient_records)
+    if request.method == "POST":
+        records.update_one(
+            {"_id": ObjectId(record_id)},
+            {"$set": {
+                "blood_pressure": request.form["blood_pressure"],
+                "temperature": request.form["temperature"],
+                "heart_rate": request.form["heart_rate"],
+                "notes": request.form["notes"],
+                "date": datetime.now().strftime("%Y-%m-%d %H:%M")
+            }}
+        )
+
+        if "doctor_id" in session:
+            return redirect(url_for("doctor_view", id=session["doctor_id"]))
+        elif "nurse_id" in session:
+            return redirect(url_for("nurse_view", id=session["nurse_id"]))
+
+    return render_template(
+        "edit_record.html",
+        record=record,
+        patient=patient,
+        doctor_id=session.get("doctor_id"),
+        nurse_id=session.get("nurse_id")
+    )
 
 # -------------------- LOGOUT --------------------
 @app.route("/logout")
