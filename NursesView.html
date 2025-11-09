@@ -66,8 +66,8 @@ th {
                 <!-- Add Record button -->
                 <a href="{{ url_for('add_record', patient_id=patient['_id']) }}" class="button">Add Record</a>
 
-                <!-- View Records button -->
-                <a href="{{ url_for('view_records', patient_id=patient['_id']) }}" class="button" style="background-color:#4caf50;">View Records</a>
+             <!-- View Records button -->
+             <a href="{{ url_for('add_record', patient_id=patient['_id']) }}" class="button" style="background-color:#4caf50;">View Records</a>
             </td>
         </tr>
         {% endfor %}
