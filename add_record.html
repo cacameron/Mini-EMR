@@ -1,129 +1,141 @@
-<!-- Add Record Page -->
-<!-- Screen that allows a doctor to add a new medical record for a specific patient -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Add Record – Mini EMR</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Patient Record</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 450px;
+            margin: 50px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0 15px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+        .btn {
+            width: 100%;
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .back-link {
+            display: block;
+            margin-top: 12px;
+            text-align: center;
+            text-decoration: none;
+            color: #007bff;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
 
-<style>
-/* ---------- General Page Layout ---------- */
-body {
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    background-color: #f4f8fb; /* Soft background tone */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Vertically center the form */
-    margin: 0;
-}
-
-/* ---------- Main Container Styling ---------- */
-.container {
-    background-color: white;
-    border: 2px solid #0a66c2; /* Blue border for emphasis */
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Subtle depth effect */
-    width: 420px;
-    padding: 30px;
-}
-
-/* ---------- Page Header ---------- */
-h2 {
-    color: #0a66c2;
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-/* ---------- Form Labels ---------- */
-label {
-    display: block;
-    margin-top: 15px;
-    font-weight: 600;
-    color: #333;
-}
-
-/* ---------- Input Fields and Textarea ---------- */
-input, textarea {
-    width: 100%;
-    padding: 10px;
-    margin-top: 6px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-}
-
-/* Allow notes field to expand vertically */
-textarea {
-    resize: vertical;
-    height: 80px;
-}
-
-/* ---------- Submit Button ---------- */
-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #0a66c2; /* Main blue color */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: background-color 0.2s ease;
-}
-
-/* Hover effect for better interactivity */
-button:hover {
-    background-color: #004b99;
-}
-
-/* ---------- Back Link Styling ---------- */
-a.back-link {
-    display: block;
-    text-align: center;
-    margin-top: 15px;
-    color: #0a66c2;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-/* Underline on hover to indicate navigation */
-a.back-link:hover {
-    text-decoration: underline;
-}
-</style>
+        /* Record section styling */
+        .record-box {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+        .edit-btn {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 6px;
+        }
+        .edit-btn:hover {
+            background: #1f7a33;
+        }
+    </style>
 </head>
-
 <body>
-<!-- ---------- Main Content Section ---------- -->
+
 <div class="container">
-    <!-- Header dynamically displays the patient’s name -->
-    <h2>Add Record for {{ patient['First Name'] }} {{ patient['Last Name'] }}</h2>
+    <h2>Add New Record</h2>
 
-    <!-- Record Submission Form -->
-    <!-- Submits POST data to Flask backend for record insertion -->
+    <p><strong>Patient:</strong> {{ patient["first_name"] }} {{ patient["last_name"] }}</p>
+
+    <!-- Add Record Form -->
     <form method="POST">
-        <label for="blood_pressure">Blood Pressure:</label>
-        <input type="text" id="blood_pressure" name="blood_pressure" placeholder="e.g., 120/80" required>
+        <label>Blood Pressure:</label>
+        <input type="text" name="blood_pressure" required>
 
-        <label for="temperature">Temperature (°F):</label>
-        <input type="text" id="temperature" name="temperature" placeholder="e.g., 98.6" required>
+        <label>Temperature:</label>
+        <input type="text" name="temperature" required>
 
-        <label for="heart_rate">Heart Rate (bpm):</label>
-        <input type="text" id="heart_rate" name="heart_rate" placeholder="e.g., 72" required>
+        <label>Heart Rate:</label>
+        <input type="text" name="heart_rate" required>
 
-        <label for="notes">Notes:</label>
-        <textarea id="notes" name="notes" placeholder="Additional comments..."></textarea>
+        <label>Notes:</label>
+        <textarea name="notes" required></textarea>
 
-        <button type="submit">Add Record</button>
+        <button type="submit" class="btn">Add Record</button>
     </form>
 
-    <!-- Back link to doctor’s dashboard (uses session doctor ID) -->
-    <a href="{{ url_for('doctor_view', id=session['doctor_id']) }}" class="back-link">← Back to Dashboard</a>
+    <hr><br>
+
+    <!-- Show Existing Records -->
+    <h3>Previous Records</h3>
+
+    {% if records %}
+        {% for record in records %}
+            <div class="record-box">
+                <p><strong>Date:</strong> {{ record["date"] }}</p>
+                <p><strong>Blood Pressure:</strong> {{ record["blood_pressure"] }}</p>
+                <p><strong>Temperature:</strong> {{ record["temperature"] }}</p>
+                <p><strong>Heart Rate:</strong> {{ record["heart_rate"] }}</p>
+                <p><strong>Notes:</strong> {{ record["notes"] }}</p>
+
+                <!-- Edit button -->
+                <a href="{{ url_for('edit_record', record_id=record['_id']) }}" class="edit-btn">
+                    ✏️ Edit
+                </a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No previous records found.</p>
+    {% endif %}
+
+    <!--  Back button for both doctor and nurse -->
+    {% if doctor_id %}
+        <a href="{{ url_for('doctor_view', id=doctor_id) }}" class="back-link">← Back to Doctor Dashboard</a>
+    {% elif nurse_id %}
+        <a href="{{ url_for('nurse_view', id=nurse_id) }}" class="back-link">← Back to Nurse Dashboard</a>
+    {% endif %}
 </div>
+
 </body>
 </html>
