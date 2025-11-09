@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Patient Record</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        .container {
+            width: 450px; margin: 50px auto; background: white; padding: 25px;
+            border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 { text-align: center; }
+        label { font-weight: bold; }
+        input, textarea {
+            width: 100%; padding: 8px; margin: 6px 0 15px 0;
+            border-radius: 4px; border: 1px solid #ccc;
+        }
+        textarea { resize: vertical; height: 80px; }
+        .btn {
+            width: 100%; background: #007bff; color: white;
+            padding: 10px; border: none; border-radius: 4px; cursor: pointer;
+        }
+        .btn:hover { background: #0056b3; }
+        .back {
+            display: block; text-align: center; margin-top: 12px;
+            text-decoration: none; color: #007bff;
+        }
+        .back:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Edit Record</h2>
+
+    <p><strong>Patient:</strong> {{ patient["First Name"] }} {{ patient["Last Name"] }}</p>
+
+    <form method="POST">
+        <label>Blood Pressure:</label>
+        <input type="text" name="blood_pressure" value="{{ record['blood_pressure'] }}" required>
+
+        <label>Temperature:</label>
+        <input type="text" name="temperature" value="{{ record['temperature'] }}" required>
+
+        <label>Heart Rate:</label>
+        <input type="text" name="heart_rate" value="{{ record['heart_rate'] }}" required>
+
+        <label>Notes:</label>
+        <textarea name="notes" required>{{ record['notes'] }}</textarea>
+
+        <button type="submit" class="btn">Save Changes</button>
+    </form>
+
+    <!-- If doctor is logged in → return to doctor dashboard -->
+    {% if doctor_id %}
+        <a href="{{ url_for('doctor_view', id=doctor_id) }}" class="back">← Back to Doctor Dashboard</a>
+    {% endif %}
+
+    <!-- If nurse is logged in → return to nurse dashboard -->
+    {% if nurse_id %}
+        <a href="{{ url_for('nurse_view', id=nurse_id) }}" class="back">← Back to Nurse Dashboard</a>
+    {% endif %}
+</div>
+
+</body>
+</html>
