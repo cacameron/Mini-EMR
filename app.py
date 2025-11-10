@@ -104,9 +104,15 @@ def patient_view(id):
     patient = patients.find_one({"_id": ObjectId(id)})
     if not patient:
         return "Patient not found", 404
+    
+    #patient data for jinja
+    patient_data = {
+        "first_name": patient.get("First Name", ""),
+        "last_name": patient.get("Last Name", "")
+    }
 
     patient_records = list(records.find({"patient_id": ObjectId(id)}))
-    return render_template("PatientView.html", patient=patient, records=patient_records)
+    return render_template("PatientView.html", patient=patient_data, records=patient_records)
 
 # -------------------- DOCTOR SECTION --------------------
 @app.route("/doctorregister", methods=["GET", "POST"])
@@ -170,8 +176,15 @@ def doctor_view(id):
         return redirect(url_for("doctor_login"))
 
     doctor = doctors.find_one({"_id": ObjectId(id)})
+    if not doctor:
+        return "Doctor Not Found", 404
+    #gathers doctor data for jinja
+    doctor_data = {
+            "first_name": doctor.get("First Name", ""),
+            "last_name": doctor.get("Last Name", "")
+    }
     all_patients = list(patients.find())
-    return render_template("DoctorView.html", doctor=doctor, patients=all_patients)
+    return render_template("DoctorView.html", doctor=doctor_data, patients=all_patients)
 
 # -------------------- NURSE SECTION --------------------
 @app.route("/nurseregister", methods=["GET", "POST"])
@@ -235,8 +248,16 @@ def nurse_view(id):
         return redirect(url_for("nurse_login"))
 
     nurse = nurses.find_one({"_id": ObjectId(id)})
+    if not nurse:
+        return "Nurse Not Found", 404
+    
+    #nurse data for jinja
+    nurse_data = {
+        "first_name": nurse.get("First Name", ""),
+        "last_name": nurse.get("Last Name", "")
+    }
     all_patients = list(patients.find())
-    return render_template("NursesView.html", nurse=nurse, patients=all_patients)
+    return render_template("NursesView.html", nurse=nurse_data, patients=all_patients)
 
 # -------------------- SHARED RECORD SYSTEM --------------------
 @app.route("/add_record/<patient_id>", methods=["GET", "POST"])
