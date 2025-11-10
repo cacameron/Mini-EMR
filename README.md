@@ -32,7 +32,7 @@ Setting up Monogodb
     https://www.mongodb.com
     Create a free account
 ```
-## Deployment:
+## To Begin:
 
 To Run Mongodb in visual studio
 
