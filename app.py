@@ -45,14 +45,25 @@ def register():
     if request.method == "POST":
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
+        email = request.form["email"].lower().strip()
         password = request.form["password"]
 
+        #verifies if email already exists w another account
+        patient_exists = patients.find_one({"Email": email})
+        if patient_exists:
+            return render_template(
+                "Patient_register.html",
+                error="An account already exists with that email!"
+            )
+
+        #continues with registration if email doesn't exist
         opid = generate_unique_opid("OP", patients)
         hashed_pw = generate_password_hash(password)
 
         patients.insert_one({
             "First Name": first_name,
             "Last Name": last_name,
+            "Email": email,
             "OPID": opid,
             "Password": hashed_pw
         })
@@ -100,14 +111,25 @@ def doctor_register():
     if request.method == "POST":
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
+        email = request.form["email"].lower().strip()
         password = request.form["password"]
 
+        #verifies if email already exists w another account
+        doctor_exists = doctors.find_one({"Email": email})
+        if doctor_exists:
+            return render_template(
+                "Doctor_register.html",
+                error="An account already exists with that email!"
+            )
+
+        #continues with registration if email doesn't exist
         opid = generate_unique_opid("DR", doctors)
         hashed_pw = generate_password_hash(password)
 
         doctors.insert_one({
             "First Name": first_name,
             "Last Name": last_name,
+            "Email": email,
             "OPID": opid,
             "Password": hashed_pw
         })
@@ -152,14 +174,25 @@ def nurse_register():
     if request.method == "POST":
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
+        email = request.form["email"].lower().strip()
         password = request.form["password"]
 
+        #verifies if email already exists w another account
+        nurse_exists = nurses.find_one({"Email": email})
+        if nurse_exists:
+            return render_template(
+                "nurse_register.html",
+                error="An account already exists with that email!"
+            )
+
+        #continues with registration if email doesn't exist
         nid = generate_unique_opid("NR", nurses)
         hashed_pw = generate_password_hash(password)
 
         nurses.insert_one({
             "First Name": first_name,
             "Last Name": last_name,
+            "Email": email,
             "NID": nid,
             "Password": hashed_pw
         })

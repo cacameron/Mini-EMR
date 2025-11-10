@@ -151,6 +151,8 @@ to the Flask backend for registration.
         <form method="POST" action="{{ url_for('register') }}">
             <input type="text" name="first_name" placeholder="Enter your First Name" required />
             <input type="text" name="last_name" placeholder="Enter your Last Name" required />
+            <!--Email field-->
+            <input type="email" name="email" placeholder="Enter your Email Address" required/>
             <input type="password" name="password" placeholder="Enter your Password" required />
             <button type="submit">Create Account</button>
         </form>
