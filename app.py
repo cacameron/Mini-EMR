@@ -1,5 +1,6 @@
 # -------------------- app.py --------------------
 import os
+import re
 import random
 from flask import Flask, render_template, request, redirect, url_for, session
 from pymongo import MongoClient
@@ -49,7 +50,9 @@ def register():
         password = request.form["password"]
 
         #verifies if email already exists w another account
-        patient_exists = patients.find_one({"Email": email})
+        patient_exists = patients.find_one({
+            "Email": re.compile(f'^{re.escape(email)}$', re.IGNORECASE)
+        })
         if patient_exists:
             return render_template(
                 "Patient_register.html",
@@ -115,7 +118,9 @@ def doctor_register():
         password = request.form["password"]
 
         #verifies if email already exists w another account
-        doctor_exists = doctors.find_one({"Email": email})
+        doctor_exists = doctors.find_one({
+            "Email": re.compile(f'^{re.escape(email)}$', re.IGNORECASE)
+        })
         if doctor_exists:
             return render_template(
                 "Doctor_register.html",
@@ -178,7 +183,9 @@ def nurse_register():
         password = request.form["password"]
 
         #verifies if email already exists w another account
-        nurse_exists = nurses.find_one({"Email": email})
+        nurse_exists = nurses.find_one({
+            "Email": re.compile(f'^{re.escape(email)}$', re.IGNORECASE)
+        })
         if nurse_exists:
             return render_template(
                 "nurse_register.html",
