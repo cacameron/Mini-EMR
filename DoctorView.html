@@ -1,6 +1,4 @@
 <!-- Doctor Dashboard Page -->
-<!-- Screen for doctors to view their assigned patients and manage medical records -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,7 +55,6 @@ body {
     flex-wrap: wrap;
 }
 
-/* Each dashboard card (if future sections are added) */
 .section {
     flex: 1;
     background-color: white;
@@ -84,7 +81,6 @@ body {
     margin-bottom: 20px;
 }
 
-/* Action button style within sections */
 .section a {
     display: inline-block;
     background-color: #0056b3;
@@ -109,7 +105,6 @@ body {
     width: 90%;
 }
 
-/* Table design for better readability */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -122,13 +117,11 @@ th, td {
     border-bottom: 1px solid #ccc;
 }
 
-/* Table header styling */
 th {
     background-color: #0056b3;
     color: white;
 }
 
-/* Button-style link inside the patient table */
 .dashboard-link {
     display: inline-block;
     background-color: #0056b3;
@@ -149,19 +142,17 @@ th {
     <!-- ---------- Page Header ---------- -->
     <div class="header">
         <!-- Personalized greeting using doctor data -->
-        <h1>Welcome, {{ doctor.first_name }} {{ doctor.last_name }}</h1>
+        <h1>Welcome, Dr. {{ doctor.first_name }} {{ doctor.last_name }}</h1>
 
-        <!-- Logout form to end doctor session -->
+        <!-- Logout form -->
         <form action="{{ url_for('logout') }}" method="GET">
             <button class="logout-btn" type="submit">Logout</button>
         </form>
     </div>
 
-    <!-- ---------- Patient List Table ---------- -->
+    <!-- ---------- Patient List ---------- -->
     <div class="patient-list">
         <h2>All Patients</h2>
-
-        <!-- Table dynamically populated from MongoDB data -->
         <table>
             <tr>
                 <th>First Name</th>
@@ -170,14 +161,12 @@ th {
                 <th>Actions</th>
             </tr>
 
-            <!-- Jinja loop to render each patient row -->
             {% for patient in patients %}
             <tr>
                 <td>{{ patient['First Name'] }}</td>
                 <td>{{ patient['Last Name'] }}</td>
                 <td>{{ patient['OPID'] }}</td>
                 <td>
-                    <!-- Link directs to Add/View Record page for the selected patient -->
                     <a href="{{ url_for('add_record', patient_id=patient['_id']) }}" class="dashboard-link">
                         Add/View Records
                     </a>
