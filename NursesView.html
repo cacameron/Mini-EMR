@@ -53,6 +53,7 @@ th {
 </head>
 <body>
 <div class="container">
+    <!--Message that the nurse is welcomed when logged in-->
     <h2>Welcome, Nurse {{ nurse.first_name }} {{ nurse.last_name }}</h2>
     <table>
         <tr>
@@ -63,11 +64,9 @@ th {
         <tr>
             <td>{{ patient['First Name'] }} {{ patient['Last Name'] }}</td>
             <td>
-                <!-- Add Record button -->
-                <a href="{{ url_for('add_record', patient_id=patient['_id']) }}" class="button">Add Record</a>
+                <!-- Add/View Record button -->
+                <a href="{{ url_for('add_record', patient_id=patient['_id']) }}" class="button">Add/View Record</a>
 
-             <!-- View Records button -->
-             <a href="{{ url_for('add_record', patient_id=patient['_id']) }}" class="button" style="background-color:#4caf50;">View Records</a>
             </td>
         </tr>
         {% endfor %}
