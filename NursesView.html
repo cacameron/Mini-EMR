@@ -1,79 +1,138 @@
 <!-- NursesView.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nurse Dashboard – Mini EMR</title>
-<style>
-body {
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    background-color: #f4f8fb;
-    margin: 0;
-    padding: 0;
-}
-.container {
-    width: 90%;
-    max-width: 900px;
-    background-color: white;
-    margin: 40px auto;
-    border-radius: 16px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    padding: 20px;
-}
-h2 {
-    text-align: center;
-    color: #0a66c2;
-    margin-bottom: 25px;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-th, td {
-    text-align: left;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-th {
-    background-color: #0a66c2;
-    color: white;
-}
-.button {
-    background-color: #0a66c2;
-    color: white;
-    padding: 8px 12px;
-    text-decoration: none;
-    border-radius: 6px;
-}
-.button:hover {
-    background-color: #004b99;
-}
-</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nurse Dashboard – Mini EMR</title>
+
+    <style>
+        /* Base page setup */
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;  
+            background-color: #f4f8fb;                   
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Top banner header */
+        .header {
+            background-color: #0a66c2;                  
+            color: white;                               
+            text-align: center;                          
+            padding: 20px 0;                             
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);      
+        }
+
+        .header h1 {
+            margin: 0;                                   
+            font-size: 28px;                            
+        }
+
+        .header p {
+            margin: 5px 0 0;                             
+            font-size: 18px;                            
+        }
+
+        /* Main content container */
+        .container {
+            width: 90%;
+            max-width: 900px;
+            background-color: white;
+            margin: 40px auto;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        /* Table title */
+        h2 {
+            text-align: center;
+            color: #0a66c2;
+            margin-bottom: 25px;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #0a66c2;
+            color: white;
+        }
+
+        /* Button style for actions */
+        .button {
+            background-color: #0a66c2;
+            color: white;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .button:hover {
+            background-color: #004b99;                  
+        }
+
+        /* Logout link style */
+        .logout-link {
+            display: block;
+            margin-top: 20px;
+            color: #0a66c2;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .logout-link:hover {
+            text-decoration: underline;                 
+        }
+    </style>
 </head>
+
 <body>
-<div class="container">
-    <!--Message that the nurse is welcomed when logged in-->
-    <h2>Welcome, Nurse {{ nurse.first_name }} {{ nurse.last_name }}</h2>
-    <table>
-        <tr>
-            <th>Patient Name</th>
-            <th>Actions</th>
-        </tr>
-        {% for patient in patients %}
-        <tr>
-            <td>{{ patient['First Name'] }} {{ patient['Last Name'] }}</td>
-            <td>
-                <!-- Add/View Record button -->
-                <a href="{{ url_for('add_record', patient_id=patient['_id']) }}" class="button">Add/View Record</a>
+    <!-- Header section displaying nurse’s name -->
+    <div class="header">
+        <!-- Dynamic nurse name pulled from Flask context -->
+        <p>Welcome, Nurse {{ nurse.first_name }} {{ nurse.last_name }}</p>
+    </div>
 
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+    <!-- Main content area -->
+    <div class="container">
+        <h2>Assigned Patients</h2>
 
-    <!-- Logout link -->
-    <a href="{{ url_for('logout') }}" style="display:block; margin-top:20px; color:#0a66c2; text-decoration:none; font-weight:600;">Logout</a>
-</div>
+        <!-- Table listing all patients -->
+        <table>
+            <tr>
+                <th>Patient Name</th>
+                <th>Actions</th>
+            </tr>
+
+            <!-- Flask/Jinja2 loop: populates table rows dynamically -->
+            {% for patient in patients %}
+            <tr>
+                <td>{{ patient['First Name'] }} {{ patient['Last Name'] }}</td>
+                <td>
+                    <!-- Link to add or view patient record -->
+                    <a href="{{ url_for('add_record', patient_id=patient['_id']) }}" class="button">
+                        Add/View Record
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <!-- Logout link -->
+        <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+    </div>
 </body>
 </html>
