@@ -1,225 +1,48 @@
 <!-- Patient Dashboard -->
-<!-- 
-This page serves as the main screen for a logged-in patient within the Mini EMR system.
-It allows the patient to view their personal medical information and history records retrieved from the database.
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <!-- Makes layout responsive on mobile and desktop -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mini EMR – Patient Dashboard</title>
-
-    <!-- Optional external CSS (currently not used but can support shared styling) -->
-    <link rel="stylesheet" href="style.css" />
-
-    <style>
-        /* 
-        GENERAL PAGE STYLING
-        - Sets a professional, light-blue healthcare-themed background
-        - Applies consistent sans-serif font across all elements
-        */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #e8f0fe;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* 
-        HEADER SECTION
-        - Displays patient's name and logout button
-        - Uses dark blue background to distinguish it from content
-        */
-        .header {
-            text-align: center;
-            background-color: #0056b3;
-            color: white;
-            padding: 20px;
-        }
-
-        /* Dashboard heading: “Welcome, [Patient Name]” */
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-
-        /* 
-        Logout Button Styling
-        - White button with blue text to contrast against dark header
-        - Rounded corners for modern look
-        */
-        .logout-btn {
-            background-color: white;
-            color: #0056b3;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        /* Light gray hover effect to indicate interactivity */
-        .logout-btn:hover {
-            background-color: #f0f0f0;
-        }
-
-        /* 
-        CONTENT LAYOUT
-        - Uses flexbox to evenly space cards (sections) across screen
-        - Ensures flexible layout that adjusts to smaller screens
-        */
-        .content {
-            display: flex;
-            justify-content: space-evenly;
-            align-items: stretch;
-            margin: 40px 20px;
-            gap: 20px;
-            flex-wrap: wrap; /* Allows cards to stack on smaller screens */
-        }
-
-        /* 
-        SECTION CARD STYLING
-        - Used for different dashboard info boxes (e.g., Profile, Appointments)
-        - White background, rounded edges, and soft shadow for elevation
-        */
-        .section {
-            flex: 1;
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            text-align: center;
-            transition: transform 0.2s ease;
-            min-width: 250px; /* Keeps consistent minimum card width */
-        }
-
-        /* Hover lift effect for interactivity */
-        .section:hover {
-            transform: translateY(-5px);
-        }
-
-        /* Section titles (e.g., “Appointments”, “Records”) */
-        .section h2 {
-            color: #0056b3;
-            margin-bottom: 15px;
-        }
-
-        /* General paragraph text inside sections */
-        .section p {
-            color: #333;
-            font-size: 15px;
-            margin-bottom: 20px;
-        }
-
-        /* 
-        Buttons/links inside section cards
-        - Styled as primary blue call-to-action buttons
-        */
-        .section a {
-            display: inline-block;
-            background-color: #0056b3;
-            color: white;
-            text-decoration: none;
-            padding: 10px 18px;
-            border-radius: 6px;
-            transition: background-color 0.2s ease;
-        }
-
-        /* Slightly darker blue on hover for feedback */
-        .section a:hover {
-            background-color: #004494;
-        }
-
-        /* 
-        RECORDS TABLE SECTION
-        - Displays patient’s visit data and vitals retrieved from the database
-        */
-        .records {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin: 30px auto;
-            padding: 20px;
-            width: 90%; /* Responsive width to fit content area */
-        }
-
-        /* Table styling for patient’s medical records */
-        table {
-            width: 100%;
-            border-collapse: collapse; /* Removes double borders */
-            margin-top: 10px;
-        }
-
-        /* 
-        Table cell padding and border for clean layout
-        - Keeps columns aligned and readable
-        */
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ccc;
-        }
-
-        /* Table header styling */
-        th {
-            background-color: #0056b3;
-            color: white;
-        }
-
-        /* Table cell text color */
-        td {
-            color: #333;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
-
 <body>
-    <!-- 
-    HEADER AREA
-    - Displays personalized greeting using Flask template variables
-    - Includes a logout button that triggers Flask “logout” route
-    -->
     <div class="header">
-        <!-- Dynamic greeting with patient's first and last name -->
         <h1>Welcome, {{ patient.first_name }} {{ patient.last_name }}</h1>
+        <p>Assigned Doctor: {{ patient.assigned_doctor_name }}</p>
 
-        <!-- Logout button form (GET request redirects to logout route) -->
         <form action="{{ url_for('logout') }}" method="GET">
             <button class="logout-btn" type="submit">Logout</button>
         </form>
     </div>
 
-    <!-- 
-    PATIENT RECORDS DISPLAY SECTION
-    - Dynamically renders medical record data stored in MongoDB (or other DB)
-    - If no records exist, displays a helpful message
-    -->
     <div id="records" class="records">
         <h2>Your Medical Records</h2>
-
-        <!-- Flask conditional: checks if records exist -->
         {% if records and records|length > 0 %}
-        <!-- Records Table -->
         <table>
             <tr>
-                <!-- Column headers describing each record field -->
                 <th>Date</th>
-                <th>Doctor</th>
+                <th>Added By</th>
                 <th>Blood Pressure</th>
                 <th>Heart Rate</th>
                 <th>Temperature</th>
                 <th>Notes</th>
             </tr>
 
-            <!-- Flask loop: populates table with each patient record -->
             {% for record in records %}
             <tr>
                 <td>{{ record['date'] }}</td>
-                <td>{{ record['doctor_name'] }}</td>
+                <td>
+                    {% if record['doctor_name'] is mapping %}
+                        {{ record['doctor_name']['name'] }}
+                        {% if record['doctor_name']['role'] %}
+                            ({{ record['doctor_name']['role'].capitalize() }})
+                        {% endif %}
+                    {% else %}
+                        {{ record['doctor_name'] }}
+                    {% endif %}
+                </td>
                 <td>{{ record['blood_pressure'] }}</td>
                 <td>{{ record['heart_rate'] }}</td>
                 <td>{{ record['temperature'] }}</td>
@@ -227,8 +50,6 @@ It allows the patient to view their personal medical information and history rec
             </tr>
             {% endfor %}
         </table>
-
-        <!-- Fallback message when no records are available -->
         {% else %}
         <p>No records found yet. Please check back later.</p>
         {% endif %}
