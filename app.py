@@ -17,7 +17,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_key")
 
 # -------------------- Connect to MongoDB --------------------
-mongo_uri = os.getenv("MONGO_URI")
+mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
 client = MongoClient(mongo_uri)
 db = client["Mini_Emr_db"]
 
@@ -26,6 +26,8 @@ patients = db["Patients"]
 doctors = db["Doctors"]
 nurses = db["Nurses"]
 records = db["Records"]
+appointments = db["Appointments"]
+
 
 # -------------------- Helper Functions --------------------
 def generate_unique_opid(prefix, collection):
@@ -326,11 +328,15 @@ def edit_record(record_id):
 
     return render_template("edit_record.html", record=record, patient=patient, doctor_id=session.get("doctor_id"), nurse_id=session.get("nurse_id"))
 
-# -------------------- IMPORT BLUEPRINT --------------------
+# -------------------- IMPORT BLUEPRINTs --------------------
 from assign_doctor import init_assign_existing_doctor
+from appointments import create_appointments_blueprint
 
 assign_doctor_bp = init_assign_existing_doctor(db)
 app.register_blueprint(assign_doctor_bp)
+
+appointments_bp = create_appointments_blueprint(db, patients, doctors, nurses)
+app.register_blueprint(appointments_bp)
 
 # -------------------- LOGOUT --------------------
 @app.route("/logout")
@@ -342,4 +348,3 @@ def logout():
 # -------------------- RUN FLASK APP --------------------
 if __name__ == "__main__":
     app.run(debug=True)
-
