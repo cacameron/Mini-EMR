@@ -17,7 +17,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_key")
 
 # -------------------- Connect to MongoDB --------------------
-mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
+mongo_uri = os.getenv("MONGO_URI")
 client = MongoClient(mongo_uri)
 db = client["Mini_Emr_db"]
 
@@ -348,3 +348,4 @@ def logout():
 # -------------------- RUN FLASK APP --------------------
 if __name__ == "__main__":
     app.run(debug=True)
+
