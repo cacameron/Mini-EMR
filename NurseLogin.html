@@ -1,141 +1,150 @@
-<!-- NurseLogin.html -->
+<!-- Nurse Login Screen -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <!-- Ensure responsiveness on all screens -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nurse Login – Mini EMR</title>
 
-    <!-- Page title -->
-    <title>Nurse Login – Mini EMR</title>
+<style>
+/* --- General Page Styling --- */
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #e8f0fe;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
 
-    <style>
-        /* ------------------ GLOBAL STYLES ------------------ */
-        body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #e8f0fe, #cfd9ff);
-            height: 100vh;
-            margin: 0;
+/* --- Login Container --- */
+.login-container {
+    background-color: white;
+    border: 3px solid #0a66c2;
+    border-radius: 16px;
+    padding: 40px 50px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 350px;
+}
 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+/* --- Header Title --- */
+.login-container h2 {
+    color: #0a66c2;
+    margin-bottom: 25px;
+    font-size: 26px;
+}
 
-        /* ------------------ MAIN CONTAINER ------------------ */
-        .container {
-            background-color: #fff;
-            padding: 40px 60px;
-            border-radius: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-        }
+/* --- Input Labels --- */
+label {
+    display: block;
+    text-align: left;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
 
-        /* ------------------ HEADER ------------------ */
-        h2 {
-            color: #1a237e;
-            margin-bottom: 25px;
-            font-size: 26px;
-        }
+/* --- Input Fields --- */
+input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    box-sizing: border-box;
+}
 
-        /* ------------------ FORM ------------------ */
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 0.9rem;
-        }
+/* --- Login Button --- */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #0a66c2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+button:hover {
+    background-color: #004b99;
+}
 
-        /* ------------------ INPUT FIELDS ------------------ */
-        input {
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            font-size: 1rem;
-        }
+/* --- Error Message --- */
+#error-message {
+    color: red;
+    margin-top: 15px;
+    font-weight: 500;
+}
 
-        /* ------------------ BUTTON ------------------ */
-        button {
-            background-color: #1a73e8;
-            color: white;
-            border: none;
-            padding: 12px 0;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease-in-out;
-            margin-top: 5px;
-        }
+/* --- Create Account Link --- */
+.create-account {
+    margin-top: 20px;
+    font-size: 14px;
+}
 
-        button:hover {
-            background-color: #155ab6;
-            transform: translateY(-2px);
-        }
+.create-account a {
+    color: #0a66c2;
+    text-decoration: none;
+    font-weight: 600;
+}
 
-        /* ------------------ LINKS ------------------ */
-        .link {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-        }
+.create-account a:hover {
+    text-decoration: underline;
+}
 
-        .link a {
-            color: #1a73e8;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .link a:hover {
-            text-decoration: underline;
-        }
-
-        /* ------------------ ERROR MESSAGE ------------------ */
-        .error {
-            color: red;
-            font-size: 0.9rem;
-            margin-bottom: 0.8rem;
-        }
-
-        /* ------------------ FOOTER ------------------ */
-        footer {
-            margin-top: 20px;
-            font-size: 13px;
-            color: #777;
-        }
-    </style>
+/* --- Back to Home Button --- */
+.back-button {
+    margin-top: 15px;
+    display: block;
+    background-color: #f0f0f0;
+    color: #0a66c2;
+    text-decoration: none;
+    border: 2px solid #0a66c2;
+    padding: 10px 0;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.back-button:hover {
+    background-color: #0a66c2;
+    color: white;
+}
+</style>
 </head>
 
 <body>
-    <div class="container">
-        <!-- Title -->
-        <h2>Nurse Login</h2>
+<div class="login-container">
+    <h2>Nurse Login</h2>
 
-        <!-- Error message if login fails -->
-        {% if error %}
-        <p class="error">{{ error }}</p>
-        {% endif %}
+    <!-- Error Display -->
+    {% if error %}
+        <p id="error-message">{{ error }}</p>
+    {% endif %}
 
-        <!-- Nurse login form -->
-        <form method="POST" action="{{ url_for('nurse_login') }}">
-            <input type="text" name="nid" placeholder="Enter your Nurse ID" required />
-            <input type="password" name="password" placeholder="Enter your Password" required />
-            <button type="submit">Login</button>
-        </form>
+    <!-- Login Form -->
+    <form action="{{ url_for('nurse_login') }}" method="POST">
+        <label for="nid">Nurse ID:</label>
+        <input type="text" id="nid" name="nid" placeholder="Enter your Nurse ID" required>
 
-        <!-- Links below form -->
-        <div class="link">
-            <p>
-                Don’t have an account? 
-                <a href="{{ url_for('nurse_register') }}">Create one here</a>
-            </p>
-            <p>
-                Return to <a href="{{ url_for('index') }}">Main login page</a>
-            </p>
-        </div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Enter your Password" required>
 
-        <!-- Footer -->
-        <footer>© 2025 Mini EMR. All rights reserved.</footer>
+        <button type="submit">Login</button>
+    </form>
+
+    <!-- Registration Link -->
+    <div class="create-account">
+        <p>Don’t have an account?
+            <a href="{{ url_for('nurse_register') }}">Create one here</a>
+        </p>
     </div>
+
+    <!-- Back Button -->
+    <a href="{{ url_for('index') }}" class="back-button">← Back to Home</a>
+</div>
 </body>
 </html>
