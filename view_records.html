@@ -1,0 +1,107 @@
+<!-- templates/view_records.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>View Records – Mini EMR</title>
+<style>
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background-color: #f4f8fb;
+    margin: 0;
+    padding: 20px;
+}
+.container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 25px;
+}
+h2 {
+    color: #0a66c2;
+    text-align: center;
+    margin-bottom: 20px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+th {
+    background-color: #0a66c2;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+a {
+    display: inline-block;
+    margin-top: 15px;
+    color: #0a66c2;
+    text-decoration: none;
+    font-weight: 600;
+}
+a:hover {
+    text-decoration: underline;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>Records for {{ patient['First Name'] }} {{ patient['Last Name'] }}</h2>
+
+    <table>
+        <tr>
+            <th>Date Added</th>
+            <th>Blood Pressure</th>
+            <th>Temperature (°F)</th>
+            <th>Heart Rate (bpm)</th>
+            <th>Notes</th>
+            <th>Added By</th>
+        </tr>
+
+        {% if records %}
+            {% for r in records %}
+            <tr>
+                <td>{{ r['date_added'].strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>{{ r['blood_pressure'] }}</td>
+                <td>{{ r['temperature'] }}</td>
+                <td>{{ r['heart_rate'] }}</td>
+                <td>{{ r['notes'] }}</td>
+                <td>
+                    {% if r['added_by'] is mapping %}
+                        {{ r['added_by']['name'] }}
+                        {% if r['added_by']['role'] %}
+                            ({{ r['added_by']['role'].capitalize() }})
+                        {% endif %}
+                    {% else %}
+                        {{ r['added_by'] }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="6" style="text-align:center; color:#888;">
+                    No records found.
+                </td>
+            </tr>
+        {% endif %}
+    </table>
+
+    {% if session.get('doctor_id') %}
+        <a href="{{ url_for('doctor_view', id=session['doctor_id']) }}">← Back to Doctor Dashboard</a>
+    {% elif session.get('nurse_id') %}
+        <a href="{{ url_for('nurse_view', id=session['nurse_id']) }}">← Back to Nurse Dashboard</a>
+    {% endif %}
+</div>
+</body>
+</html>
