@@ -39,7 +39,6 @@ def generate_unique_opid(prefix, collection):
 # -------------------- Home Page --------------------
 @app.route("/")
 def index():
-    """Landing page for the Mini EMR system."""
     return render_template("index.html")
 
 # -------------------- PATIENT SECTION --------------------
@@ -67,13 +66,17 @@ def register():
 
         # Check for existing patient
         if patients.find_one({"Email": re.compile(f'^{re.escape(email)}$', re.IGNORECASE)}):
-            return render_template("Patient_register.html", error="An account already exists with that email!", doctors=doctor_list)
+            return render_template(
+                "Patient_register.html",
+                error="An account already exists with that email!",
+                doctors=doctor_list
+            )
 
         # Generate ID & hash password
         opid = generate_unique_opid("OP", patients)
         hashed_pw = generate_password_hash(password)
 
-        # Use selected doctor
+        # Assign selected doctor
         assigned_doctor_id = ObjectId(selected_doctor_id) if selected_doctor_id else None
 
         patients.insert_one({
@@ -85,7 +88,20 @@ def register():
             "AssignedDoctorID": assigned_doctor_id
         })
 
-        return render_template("Patient_register_success.html", first_name=first_name, last_name=last_name, opid=opid)
+        # Fetch doctor name to pass to template
+        doctor_name = "Not assigned"
+        if assigned_doctor_id:
+            doctor = doctors.find_one({"_id": assigned_doctor_id})
+            if doctor:
+                doctor_name = f"Dr. {doctor.get('First Name', '')} {doctor.get('Last Name', '')}"
+
+        return render_template(
+            "Patient_register_success.html",
+            first_name=first_name,
+            last_name=last_name,
+            opid=opid,
+            doctor_name=doctor_name
+        )
 
     return render_template("Patient_register.html", doctors=doctor_list)
 
