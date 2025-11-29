@@ -1,41 +1,21 @@
 <!-- Patient_register.html -->
-<!-- 
-This page allows new patients to create an account in the Mini EMR system.
-It collects the patient's first name, last name, and password, then submits this data
-to the Flask backend for registration.
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <!-- Makes the page mobile-friendly and responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Create Account – Mini EMR</title>
 
     <style>
-        /* 
-        Body Styling:
-        - Uses a soft blue background to give a healthcare-friendly feel
-        - Centers the registration form both horizontally and vertically
-        - Applies a modern sans-serif font for readability
-        */
         body {
             font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: #e8f0fe;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* Full viewport height */
-            margin: 0; /* Remove default margin for clean layout */
+            height: 100vh;
+            margin: 0;
         }
-
-        /* 
-        Container Styling:
-        - Creates a white card for the registration form
-        - Rounded corners and drop shadow add depth
-        - Fixed width for a compact and balanced layout
-        */
         .container {
             background-color: white;
             padding: 2rem;
@@ -44,46 +24,21 @@ to the Flask backend for registration.
             width: 350px;
             text-align: center;
         }
-
-        /* 
-        Header Styling:
-        - Clear heading introducing the page
-        - Darker gray text for contrast
-        */
         h2 {
             margin-bottom: 1rem;
             color: #333;
         }
-
-        /* 
-        Form Styling:
-        - Arranges inputs vertically with spacing between them
-        */
         form {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem; /* Vertical space between inputs */
+            gap: 0.8rem;
         }
-
-        /* 
-        Input Styling:
-        - Rounded corners for friendly appearance
-        - Light gray borders and padding for usability
-        - Consistent font sizing for readability
-        */
-        input {
+        input, select {
             padding: 0.7rem;
             border-radius: 6px;
             border: 1px solid #ccc;
             font-size: 1rem;
         }
-
-        /* 
-        Button Styling:
-        - Blue background to match theme color
-        - White text for high contrast
-        - Rounded corners and hover effect for better UX
-        */
         button {
             background-color: #0078d7;
             color: white;
@@ -92,35 +47,19 @@ to the Flask backend for registration.
             border-radius: 6px;
             cursor: pointer;
             font-size: 1rem;
-            transition: 0.2s; /* Smooth hover transition */
+            transition: 0.2s;
         }
-
-        /* Darker blue when hovering to indicate interactivity */
         button:hover {
             background-color: #005fa3;
         }
-
-        /* 
-        Link Section:
-        - Provides navigation for users who already have an account
-        - Small font for secondary action
-        */
         .link {
             margin-top: 1rem;
             font-size: 0.9rem;
         }
-
-        /* Blue link text matching the site’s theme */
         .link a {
             color: #0078d7;
             text-decoration: none;
         }
-
-        /* 
-        Error Message Styling:
-        - Displays in red when backend returns an error
-        - For example, if a patient already exists or invalid input is detected
-        */
         .error {
             color: red;
             font-size: 0.9rem;
@@ -130,37 +69,31 @@ to the Flask backend for registration.
 </head>
 
 <body>
-    <!-- 
-    Central content container holding the entire registration form.
-    This ensures consistent alignment and appearance on all devices.
-    -->
     <div class="container">
-        <!-- Main page heading -->
         <h2>Create Your Account</h2>
 
-        <!-- Flask conditional: Displays error message if registration fails -->
         {% if error %}
         <p class="error">{{ error }}</p>
         {% endif %}
 
-        <!-- 
-        Registration form:
-        - Uses POST method to securely send data to Flask backend
-        - Submits to the “register” route defined in app.py
-        -->
         <form method="POST" action="{{ url_for('register') }}">
+
             <input type="text" name="first_name" placeholder="Enter your First Name" required />
             <input type="text" name="last_name" placeholder="Enter your Last Name" required />
-            <!--Email field-->
             <input type="email" name="email" placeholder="Enter your Email Address" required/>
             <input type="password" name="password" placeholder="Enter your Password" required />
+
+            <!-- Doctor Dropdown -->
+            <select name="doctor_id" required>
+                <option value="">Select Your Doctor</option>
+                {% for doc in doctors %}
+                    <option value="{{ doc['_id'] }}">{{ doc['first_name'] }} {{ doc['last_name'] }}</option>
+                {% endfor %}
+            </select>
+
             <button type="submit">Create Account</button>
         </form>
 
-        <!-- 
-        Link for existing users:
-        - Redirects to patient login page if they already have an account
-        -->
         <div class="link">
             <p>Already have an account? <a href="{{ url_for('patient_login') }}">Login here</a></p>
         </div>

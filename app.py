@@ -28,7 +28,6 @@ nurses = db["Nurses"]
 records = db["Records"]
 appointments = db["Appointments"]
 
-
 # -------------------- Helper Functions --------------------
 def generate_unique_opid(prefix, collection):
     """Generate unique OPID for given collection (e.g., OP00001, DR00002)."""
@@ -36,13 +35,6 @@ def generate_unique_opid(prefix, collection):
         opid = prefix + "".join(random.choices("0123456789", k=5))
         if not collection.find_one({"OPID": opid}):
             return opid
-
-def get_random_doctor_id():
-    """Return the ObjectId of a random doctor, or None if no doctor exists."""
-    doc = doctors.find_one()
-    if doc:
-        return doc["_id"]
-    return None
 
 # -------------------- Home Page --------------------
 @app.route("/")
@@ -53,25 +45,36 @@ def index():
 # -------------------- PATIENT SECTION --------------------
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """Handles new patient registration with automatic doctor assignment."""
-    doctor_list = list(doctors.find({}, {"First Name": 1, "Last Name": 1, "OPID": 1}))
+    """Handles new patient registration with doctor selection from dropdown."""
+
+    # Convert database doctor fields to template-safe format
+    doctor_list = [
+        {
+            "_id": d["_id"],
+            "first_name": d.get("First Name", ""),
+            "last_name": d.get("Last Name", ""),
+            "opid": d.get("OPID", "")
+        }
+        for d in doctors.find()
+    ]
 
     if request.method == "POST":
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
         email = request.form["email"].lower().strip()
         password = request.form["password"]
+        selected_doctor_id = request.form.get("doctor_id")
 
         # Check for existing patient
         if patients.find_one({"Email": re.compile(f'^{re.escape(email)}$', re.IGNORECASE)}):
             return render_template("Patient_register.html", error="An account already exists with that email!", doctors=doctor_list)
 
-        # Generate OPID and hash password
+        # Generate ID & hash password
         opid = generate_unique_opid("OP", patients)
         hashed_pw = generate_password_hash(password)
 
-        # Automatically assign a doctor if not selected
-        assigned_doctor_id = get_random_doctor_id()
+        # Use selected doctor
+        assigned_doctor_id = ObjectId(selected_doctor_id) if selected_doctor_id else None
 
         patients.insert_one({
             "First Name": first_name,
@@ -88,7 +91,6 @@ def register():
 
 @app.route("/patientlogin", methods=["GET", "POST"])
 def patient_login():
-    """Authenticate patient and redirect to dashboard."""
     if request.method == "POST":
         opid = request.form["opid"]
         password = request.form["password"]
@@ -104,7 +106,6 @@ def patient_login():
 
 @app.route("/patients/<id>")
 def patient_view(id):
-    """Patient dashboard: shows personal info, assigned doctor, and records."""
     if "patient_id" not in session or session["patient_id"] != id:
         return redirect(url_for("patient_login"))
 
@@ -112,17 +113,17 @@ def patient_view(id):
     if not patient:
         return "Patient not found", 404
 
-    # Patient basic info
     patient_data = {
         "first_name": patient.get("First Name", ""),
         "last_name": patient.get("Last Name", "")
     }
 
-    # Assigned doctor info
     assigned_doctor = doctors.find_one({"_id": patient.get("AssignedDoctorID")})
-    patient_data["assigned_doctor_name"] = f"Dr. {assigned_doctor['First Name']} {assigned_doctor['Last Name']}" if assigned_doctor else "Not assigned"
+    patient_data["assigned_doctor_name"] = (
+        f"Dr. {assigned_doctor['First Name']} {assigned_doctor['Last Name']}"
+        if assigned_doctor else "Not assigned"
+    )
 
-    # Retrieve records and ensure added_by is a string
     patient_records = []
     for rec in records.find({"patient_id": ObjectId(id)}):
         rec_copy = dict(rec)
@@ -134,7 +135,6 @@ def patient_view(id):
 # -------------------- DOCTOR SECTION --------------------
 @app.route("/doctorregister", methods=["GET", "POST"])
 def doctor_register():
-    """Handles doctor registration."""
     if request.method == "POST":
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
@@ -161,7 +161,6 @@ def doctor_register():
 
 @app.route("/doctorlogin", methods=["GET", "POST"])
 def doctor_login():
-    """Authenticate doctor and redirect to dashboard."""
     if request.method == "POST":
         opid = request.form["opid"]
         password = request.form["password"]
@@ -177,7 +176,6 @@ def doctor_login():
 
 @app.route("/doctors/<id>")
 def doctor_view(id):
-    """Doctor dashboard: shows all patients assigned to this doctor."""
     if "doctor_id" not in session or session["doctor_id"] != id:
         return redirect(url_for("doctor_login"))
 
@@ -187,7 +185,6 @@ def doctor_view(id):
 
     doctor_data = {"first_name": doctor.get("First Name", ""), "last_name": doctor.get("Last Name", "")}
 
-    # Only patients assigned to this doctor
     assigned_patients = []
     for p in patients.find({"AssignedDoctorID": ObjectId(id)}):
         p_copy = dict(p)
@@ -199,7 +196,6 @@ def doctor_view(id):
 # -------------------- NURSE SECTION --------------------
 @app.route("/nurseregister", methods=["GET", "POST"])
 def nurse_register():
-    """Handles nurse account creation."""
     if request.method == "POST":
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
@@ -225,7 +221,6 @@ def nurse_register():
 
 @app.route("/nurselogin", methods=["GET", "POST"])
 def nurse_login():
-    """Authenticate nurse and redirect to dashboard."""
     if request.method == "POST":
         nid = request.form["nid"]
         password = request.form["password"]
@@ -241,7 +236,6 @@ def nurse_login():
 
 @app.route("/nurses/<id>")
 def nurse_view(id):
-    """Nurse dashboard: sees all patients and their assigned doctors."""
     if "nurse_id" not in session or session["nurse_id"] != id:
         return redirect(url_for("nurse_login"))
 
@@ -251,7 +245,6 @@ def nurse_view(id):
 
     nurse_data = {"first_name": nurse.get("First Name", ""), "last_name": nurse.get("Last Name", "")}
 
-    # Include assigned doctor name for each patient
     all_patients = []
     for p in patients.find():
         p_copy = dict(p)
@@ -264,7 +257,6 @@ def nurse_view(id):
 # -------------------- SHARED RECORD SYSTEM --------------------
 @app.route("/add_record/<patient_id>", methods=["GET", "POST"])
 def add_record(patient_id):
-    """Allows doctors or nurses to add a new medical record for a patient."""
     if "doctor_id" not in session and "nurse_id" not in session:
         return redirect(url_for("index"))
 
@@ -303,7 +295,6 @@ def add_record(patient_id):
 
 @app.route("/edit_record/<record_id>", methods=["GET", "POST"])
 def edit_record(record_id):
-    """Edit an existing medical record."""
     record = records.find_one({"_id": ObjectId(record_id)})
     if not record:
         return "Record not found", 404
@@ -328,7 +319,7 @@ def edit_record(record_id):
 
     return render_template("edit_record.html", record=record, patient=patient, doctor_id=session.get("doctor_id"), nurse_id=session.get("nurse_id"))
 
-# -------------------- IMPORT BLUEPRINTs --------------------
+# -------------------- IMPORT BLUEPRINTS --------------------
 from assign_doctor import init_assign_existing_doctor
 from appointments import create_appointments_blueprint
 
@@ -341,11 +332,9 @@ app.register_blueprint(appointments_bp)
 # -------------------- LOGOUT --------------------
 @app.route("/logout")
 def logout():
-    """Clears session and logs out any user type."""
     session.clear()
     return redirect(url_for("index"))
 
 # -------------------- RUN FLASK APP --------------------
 if __name__ == "__main__":
     app.run(debug=True)
-
