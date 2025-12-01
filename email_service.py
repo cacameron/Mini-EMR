@@ -40,3 +40,5 @@ def send_email(to_email: str, subject: str, message: str):
 #example
 if __name__ == "__main__":
     send_email("recipient@example.com", "Test Email", "This is a test email from Maileroo.")
+
+
