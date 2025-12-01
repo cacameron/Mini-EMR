@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from datetime import datetime
+from email_service import send_email
 
 # -------------------- Load Environment Variables --------------------
 load_dotenv()
@@ -78,6 +79,10 @@ def register():
             "Password": hashed_pw,
             "AssignedDoctorID": assigned_doctor_id
         })
+        # Send email notification
+        subject = "Your Account Has Been Created! :D"
+        message = f"Hello {first_name},\n\nYour patient account has been successfully created.\nOPID: {opid}\nAssigned Doctor: {doctor_name}\n\nYou can now log in to the system.\n\nBest regards,\nWell Together Team"
+        send_email(email, subject, message)
 
         doctor_name = "Not assigned"
         if assigned_doctor_id:
@@ -144,6 +149,11 @@ def doctor_register():
 
         doctors.insert_one({"First Name": first_name, "Last Name": last_name, "Email": email, "OPID": opid, "Password": hashed_pw})
 
+        # Send email notification
+        subject = "Your Account Has Been Created! :D"
+        message = f"Hello {first_name},\n\nYour doctor account has been successfully created.\nOPID: {opid}\n\nYou can now log in to the system.\n\nBest regards,\nWell Together Team"
+        send_email(email, subject, message)
+
         return render_template("Doctor_register_success.html", first_name=first_name, last_name=last_name, opid=opid)
 
     return render_template("Doctor_register.html")
@@ -205,6 +215,11 @@ def nurse_register():
         hashed_pw = generate_password_hash(password)
 
         nurses.insert_one({"First Name": first_name, "Last Name": last_name, "Email": email, "NID": nid, "Password": hashed_pw})
+
+        # Send email notification
+        subject = "Your Account Has Been Created! :D"
+        message = f"Hello {first_name},\n\nYour nurse account has been successfully created.\nNID: {nid}\n\nYou can now log in to the system.\n\nBest regards,\nWell Together Team"
+        send_email(email, subject, message)
 
         return render_template("nurse_register_success.html", first_name=first_name, last_name=last_name, opid=nid)
     return render_template("nurse_register.html")
