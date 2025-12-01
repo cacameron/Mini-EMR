@@ -1,140 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Patient Record</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 450px;
-            margin: 50px auto;
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-        }
-        label {
-            font-weight: bold;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 8px;
-            margin: 6px 0 15px 0;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-        textarea {
-            resize: vertical;
-            height: 80px;
-        }
-        .btn {
-            width: 100%;
-            background: #007bff;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background: #0056b3;
-        }
-        .back-link {
-            display: block;
-            margin-top: 12px;
-            text-align: center;
-            text-decoration: none;
-            color: #007bff;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Record section styling */
-        .record-box {
-            background: #fafafa;
-            border: 1px solid #ddd;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-        }
-        .edit-btn {
-            display: inline-block;
-            background: #28a745;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 4px;
-            text-decoration: none;
-            margin-top: 6px;
-        }
-        .edit-btn:hover {
-            background: #1f7a33;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Records – {{ patient['First Name'] }} {{ patient['Last Name'] }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<style>
+body { font-family: Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 0; }
+.header { text-align: center; background-color: #0056b3; color: white; padding: 20px; }
+.header h1 { margin: 0; font-size: 26px; }
+.logout-btn { background-color: white; color: #0056b3; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+.logout-btn:hover { background-color: #f0f0f0; }
+.container { max-width: 900px; margin: 30px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+h2 { color: #0056b3; }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ccc; }
+th { background-color: #0056b3; color: white; }
+form { margin-top: 20px; }
+input, textarea { width: 100%; padding: 10px; margin: 5px 0 15px; border-radius: 6px; border: 1px solid #ccc; }
+button { background-color: #0056b3; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+button:hover { background-color: #003d80; }
+</style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Add New Record</h2>
-
-    <p><strong>Patient:</strong> {{ patient["first_name"] }} {{ patient["last_name"] }}</p>
-
-    <!-- Add Record Form -->
-    <form method="POST">
-        <label>Blood Pressure:</label>
-        <input type="text" name="blood_pressure" required>
-
-        <label>Temperature:</label>
-        <input type="text" name="temperature" required>
-
-        <label>Heart Rate:</label>
-        <input type="text" name="heart_rate" required>
-
-        <label>Notes:</label>
-        <textarea name="notes" required></textarea>
-
-        <button type="submit" class="btn">Add Record</button>
+<div class="header">
+    <h1>{{ patient['First Name'] }} {{ patient['Last Name'] }} – Records</h1>
+    <form action="{{ url_for('logout') }}" method="GET">
+        <button class="logout-btn" type="submit">Logout</button>
     </form>
+</div>
 
-    <hr><br>
+<div class="container">
+<h2>Add New Record</h2>
+<form action="{{ url_for('add_record', patient_id=patient['_id']) }}" method="POST" enctype="multipart/form-data">
+    <label>Blood Pressure:</label>
+    <input type="text" name="blood_pressure" required>
 
-    <!-- Show Existing Records -->
-    <h3>Previous Records</h3>
+    <label>Temperature:</label>
+    <input type="text" name="temperature" required>
 
-    {% if records %}
-        {% for record in records %}
-            <div class="record-box">
-                <p><strong>Date:</strong> {{ record["date"] }}</p>
-                <p><strong>Blood Pressure:</strong> {{ record["blood_pressure"] }}</p>
-                <p><strong>Temperature:</strong> {{ record["temperature"] }}</p>
-                <p><strong>Heart Rate:</strong> {{ record["heart_rate"] }}</p>
-                <p><strong>Notes:</strong> {{ record["notes"] }}</p>
+    <label>Heart Rate:</label>
+    <input type="text" name="heart_rate" required>
 
-                <!-- Edit button -->
-                <a href="{{ url_for('edit_record', record_id=record['_id']) }}" class="edit-btn">
-                    ✏️ Edit
-                </a>
-            </div>
-        {% endfor %}
-    {% else %}
-        <p>No previous records found.</p>
-    {% endif %}
+    <label>Notes:</label>
+    <textarea name="notes" rows="4" required></textarea>
 
-    <!--  Back button for both doctor and nurse -->
-    {% if doctor_id %}
-        <a href="{{ url_for('doctor_view', id=doctor_id) }}" class="back-link">← Back to Doctor Dashboard</a>
-    {% elif nurse_id %}
-        <a href="{{ url_for('nurse_view', id=nurse_id) }}" class="back-link">← Back to Nurse Dashboard</a>
-    {% endif %}
+    <label>Attach File (optional):</label>
+    <input type="file" name="file">
+
+    <button type="submit">Add Record</button>
+</form>
+
+<h2>Existing Records</h2>
+{% if records and records|length > 0 %}
+<table>
+<tr>
+    <th>Date</th>
+    <th>Added By</th>
+    <th>Blood Pressure</th>
+    <th>Temperature</th>
+    <th>Heart Rate</th>
+    <th>Notes</th>
+    <th>File</th>
+</tr>
+{% for rec in records %}
+<tr>
+    <td>{{ rec.date }}</td>
+    <td>{{ rec.added_by }}</td>
+    <td>{{ rec.blood_pressure }}</td>
+    <td>{{ rec.temperature }}</td>
+    <td>{{ rec.heart_rate }}</td>
+    <td>{{ rec.notes }}</td>
+    <td>
+        {% if rec.file_url %}
+            <a href="{{ rec.file_url }}" target="_blank">View File</a>
+        {% else %}
+            N/A
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<p>No records available for this patient.</p>
+{% endif %}
 </div>
 
 </body>

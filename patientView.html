@@ -19,6 +19,7 @@
 
     <div id="records" class="records">
         <h2>Your Medical Records</h2>
+
         {% if records and records|length > 0 %}
         <table>
             <tr>
@@ -28,11 +29,13 @@
                 <th>Heart Rate</th>
                 <th>Temperature</th>
                 <th>Notes</th>
+                <th>File</th>     <!-- NEW COLUMN -->
             </tr>
 
             {% for record in records %}
             <tr>
                 <td>{{ record['date'] }}</td>
+
                 <td>
                     {% if record['doctor_name'] is mapping %}
                         {{ record['doctor_name']['name'] }}
@@ -43,14 +46,26 @@
                         {{ record['doctor_name'] }}
                     {% endif %}
                 </td>
-                <!-- Information that the doctor or nurse added -->
+
                 <td>{{ record['blood_pressure'] }}</td>
                 <td>{{ record['heart_rate'] }}</td>
                 <td>{{ record['temperature'] }}</td>
                 <td>{{ record['notes'] }}</td>
+
+                <!-- NEW: File download / preview -->
+                <td>
+                    {% if record.file_url %}
+                        <a href="{{ record.file_url }}" target="_blank">
+                            View File
+                        </a>
+                    {% else %}
+                        No file
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </table>
+
         {% else %}
         <p>No records found yet. Please check back later.</p>
         {% endif %}

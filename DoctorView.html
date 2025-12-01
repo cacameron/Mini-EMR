@@ -1,127 +1,31 @@
-<!-- Doctor Dashboard Page -->
-<!-- Screen for doctors to view their assigned patients and manage medical records -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Mini EMR – Doctor Dashboard</title>
-<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 <style>
-body {
-font-family: Arial, sans-serif;
-background-color: #e8f0fe;
-margin: 0;
-padding: 0;
-}
-.header {
-text-align: center;
-background-color: #0056b3;
-color: white;
-padding: 20px;
-}
-.header h1 {
-margin: 0;
-font-size: 28px;
-}
-.logout-btn {
-background-color: white;
-color: #0056b3;
-border: none;
-padding: 10px 20px;
-border-radius: 6px;
-font-weight: bold;
-cursor: pointer;
-margin-top: 10px;
-}
-.logout-btn:hover {
-background-color: #f0f0f0;
-}
-.content {
-display: flex;
-justify-content: space-evenly;
-align-items: stretch;
-margin: 40px 20px;
-gap: 20px;
-flex-wrap: wrap;
-}
-.section {
-flex: 1;
-background-color: white;
-border-radius: 12px;
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-padding: 20px;
-text-align: center;
-transition: transform 0.2s ease;
-min-width: 250px;
-}
-.section:hover {
-transform: translateY(-5px);
-}
-.section h2 {
-color: #0056b3;
-margin-bottom: 15px;
-}
-.section p {
-color: #333;
-font-size: 15px;
-margin-bottom: 20px;
-}
-.section a {
-display: inline-block;
-background-color: #0056b3;
-color: white;
-text-decoration: none;
-padding: 10px 18px;
-border-radius: 6px;
-transition: background-color 0.2s ease;
-}
-.section a:hover {
-background-color: #004494;
-}
-/* New patient table section */
-.patient-list {
-background-color: white;
-border-radius: 12px;
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-margin: 30px auto;
-padding: 20px;
-width: 90%;
-}
-table {
-width: 100%;
-border-collapse: collapse;
-margin-top: 10px;
-}
-th, td {
-padding: 10px;
-text-align: left;
-border-bottom: 1px solid #ccc;
-}
-th {
-background-color: #0056b3;
-color: white;
-}
-.dashboard-link {
-display: inline-block;
-background-color: #0056b3;
-color: white;
-padding: 6px 12px;
-border-radius: 6px;
-text-decoration: none;
-font-weight: 600;
-}
-.dashboard-link:hover {
-background-color: #003d80;
-}
+body { font-family: Arial, sans-serif; background-color: #e8f0fe; margin: 0; padding: 0; }
+.header { text-align: center; background-color: #0056b3; color: white; padding: 20px; }
+.header h1 { margin: 0; font-size: 28px; }
+.logout-btn { background-color: white; color: #0056b3; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+.logout-btn:hover { background-color: #f0f0f0; }
+.records { background-color: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 30px auto; padding: 20px; width: 90%; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ccc; }
+th { background-color: #0056b3; color: white; }
+.dashboard-link { display: inline-block; background-color: #0056b3; color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: 600; }
+.dashboard-link:hover { background-color: #003d80; }
 </style>
 </head>
 <body>
+
 <div class="header">
-<h1>Dr. {{ doctor.first_name }} {{ doctor.last_name }}</h1>
-<form action="{{ url_for('logout') }}" method="GET">
-<button class="logout-btn" type="submit">Logout</button>
-</form>
+    <h1>Dr. {{ doctor.first_name }} {{ doctor.last_name }}</h1>
+    <form action="{{ url_for('logout') }}" method="GET">
+        <button class="logout-btn" type="submit">Logout</button>
+    </form>
 </div>
 
 <div class="records">
@@ -129,15 +33,19 @@ background-color: #003d80;
 {% if patients and patients|length > 0 %}
 <table>
 <tr>
-<th>Patient Name</th>
-<th>OPID</th>
-<th>Assigned Doctor</th>
+    <th>Patient Name</th>
+    <th>OPID</th>
+    <th>Assigned Doctor</th>
+    <th>Actions</th>
 </tr>
 {% for patient in patients %}
 <tr>
-<td>{{ patient['First Name'] }} {{ patient['Last Name'] }}</td>
-<td>{{ patient['OPID'] }}</td>
-<td>{{ patient['doctor_name'] }}</td>
+    <td>{{ patient['First Name'] }} {{ patient['Last Name'] }}</td>
+    <td>{{ patient['OPID'] }}</td>
+    <td>{{ patient['doctor_name'] }}</td>
+    <td>
+        <a class="dashboard-link" href="{{ url_for('add_record', patient_id=patient['_id']) }}">View/Add Record</a>
+    </td>
 </tr>
 {% endfor %}
 </table>
@@ -145,5 +53,6 @@ background-color: #003d80;
 <p>No patients assigned yet.</p>
 {% endif %}
 </div>
+
 </body>
 </html>
