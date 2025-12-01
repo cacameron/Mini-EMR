@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 from dotenv import load_dotenv
 
@@ -16,18 +17,20 @@ def send_email(to_email: str, subject: str, message: str):
     """Send an email using the Maileroo API."""
 
     payload = {
-        'from': f'{SENDER_NAME} <{SENDER_EMAIL}>',
-        'to': to_email,
-        'subject': subject,
-        'plain': message,
+        "from": {"address": SENDER_EMAIL,"display_name": SENDER_NAME},
+        "to": [
+            {"address": to_email}
+        ],
+        "subject": subject,
+        "plain": message
     }
 
     try:
         # API Request
-        response = requests.post(API_URL, headers={'X-API-Key': API_KEY}, data=payload)
+        response = requests.post(API_URL, headers={'X-API-Key': API_KEY, 'Content-Type': 'application/json'}, data=json.dumps(payload))
         response_json = response.json()
         if response.status_code == 200 and response.json().get('success'):
-            print("Email sent successfully to {to_email}!")
+            print(f"Email sent successfully to {to_email}!")
             return True
         else:
             error_message = response_json.get('message', 'Unknown error')
@@ -39,6 +42,4 @@ def send_email(to_email: str, subject: str, message: str):
 
 #example
 if __name__ == "__main__":
-    send_email("recipient@example.com", "Test Email", "This is a test email from Maileroo.")
-
-
+    send_email("youremail@example.com", "Test Email", "This is a test email from Maileroo.")
