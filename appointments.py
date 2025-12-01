@@ -2,12 +2,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session
 from bson.objectid import ObjectId
 from datetime import datetime
+from email_service import send_email
 
-
-#placeholder to send emails through maileroo
-def send_email(to_email, subject, message):
-    print(f"[EMAIL DISABLED] To: {to_email} | Subject:{subject}\n{message}")
-    return
 
 #blueprint
 def create_appointments_blueprint(db, patients_col, doctors_col, nurses_col):
