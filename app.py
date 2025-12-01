@@ -304,6 +304,18 @@ def add_record(patient_id):
 def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
+# -------------------- IMPORT BLUEPRINTs --------------------
+from assign_doctor import init_assign_existing_doctor
+from appointments import create_appointments_blueprint
+from email_routes import email_bp
+
+assign_doctor_bp = init_assign_existing_doctor(db)
+app.register_blueprint(assign_doctor_bp)
+
+appointments_bp = create_appointments_blueprint(db, patients, doctors, nurses)
+app.register_blueprint(appointments_bp)
+
+app.register_blueprint(email_bp)
 # -------------------- LOGOUT --------------------
 @app.route("/logout")
 def logout():
