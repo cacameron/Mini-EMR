@@ -71,6 +71,14 @@ def register():
         hashed_pw = generate_password_hash(password)
         assigned_doctor_id = ObjectId(selected_doctor_id) if selected_doctor_id else None
 
+        # ---------------- FIX: doctor_name must be defined BEFORE sending email ----------------
+        doctor_name = "Not assigned"
+        if assigned_doctor_id:
+            doctor = doctors.find_one({"_id": assigned_doctor_id})
+            if doctor:
+                doctor_name = f"Dr. {doctor.get('First Name', '')} {doctor.get('Last Name', '')}"
+
+        # Insert patient
         patients.insert_one({
             "First Name": first_name,
             "Last Name": last_name,
@@ -79,18 +87,26 @@ def register():
             "Password": hashed_pw,
             "AssignedDoctorID": assigned_doctor_id
         })
-        # Send email notification
+
+        # Send email with doctor_name now properly defined
         subject = "Your Account Has Been Created! :D"
-        message = f"Hello {first_name},\n\nYour patient account has been successfully created.\nOPID: {opid}\nAssigned Doctor: {doctor_name}\n\nYou can now log in to the system.\n\nBest regards,\nWell Together Team"
+        message = (
+            f"Hello {first_name},\n\n"
+            f"Your patient account has been successfully created.\n"
+            f"OPID: {opid}\n"
+            f"Assigned Doctor: {doctor_name}\n\n"
+            f"You can now log in to the system.\n\n"
+            f"Best regards,\nWell Together Team"
+        )
         send_email(email, subject, message)
 
-        doctor_name = "Not assigned"
-        if assigned_doctor_id:
-            doctor = doctors.find_one({"_id": assigned_doctor_id})
-            if doctor:
-                doctor_name = f"Dr. {doctor.get('First Name', '')} {doctor.get('Last Name', '')}"
-
-        return render_template("Patient_register_success.html", first_name=first_name, last_name=last_name, opid=opid, doctor_name=doctor_name)
+        return render_template(
+            "Patient_register_success.html",
+            first_name=first_name,
+            last_name=last_name,
+            opid=opid,
+            doctor_name=doctor_name
+        )
 
     return render_template("Patient_register.html", doctors=doctor_list)
 
@@ -149,9 +165,8 @@ def doctor_register():
 
         doctors.insert_one({"First Name": first_name, "Last Name": last_name, "Email": email, "OPID": opid, "Password": hashed_pw})
 
-        # Send email notification
         subject = "Your Account Has Been Created! :D"
-        message = f"Hello {first_name},\n\nYour doctor account has been successfully created.\nOPID: {opid}\n\nYou can now log in to the system.\n\nBest regards,\nWell Together Team"
+        message = f"Hello {first_name},\n\nYour doctor account has been successfully created.\nOPID: {opid}\n\nYou can now log in.\n\nBest regards,\nWell Together Team"
         send_email(email, subject, message)
 
         return render_template("Doctor_register_success.html", first_name=first_name, last_name=last_name, opid=opid)
@@ -216,9 +231,8 @@ def nurse_register():
 
         nurses.insert_one({"First Name": first_name, "Last Name": last_name, "Email": email, "NID": nid, "Password": hashed_pw})
 
-        # Send email notification
         subject = "Your Account Has Been Created! :D"
-        message = f"Hello {first_name},\n\nYour nurse account has been successfully created.\nNID: {nid}\n\nYou can now log in to the system.\n\nBest regards,\nWell Together Team"
+        message = f"Hello {first_name},\n\nYour nurse account has been successfully created.\nNID: {nid}\n\nYou can now log in.\n\nBest regards,\nWell Together Team"
         send_email(email, subject, message)
 
         return render_template("nurse_register_success.html", first_name=first_name, last_name=last_name, opid=nid)
@@ -331,6 +345,7 @@ appointments_bp = create_appointments_blueprint(db, patients, doctors, nurses)
 app.register_blueprint(appointments_bp)
 
 app.register_blueprint(email_bp)
+
 # -------------------- LOGOUT --------------------
 @app.route("/logout")
 def logout():
