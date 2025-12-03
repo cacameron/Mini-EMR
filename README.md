@@ -14,7 +14,7 @@ We decided to do a Mini-EMR because we wanted to help gear something towards sma
 
 Front End: HTML, CSS and Java Scritpt
 
-Back end: Python
+Back end: Python, HTML
 
 Database: Mongodb
 
@@ -107,8 +107,27 @@ Once you click that it will take you into a webrowser on your computer
 ```bash
   Sign in to the according one and view the records
 ```
-<img width="400" height="400" alt="logoForMiniEMR" src="https://github.com/user-attachments/assets/9de0a7d5-fb52-4923-81c6-f3fd3c66cd79" />
 
 
 
 
+
+## Running With API
+```bash
+Running with api for Scheduling
+```
+```bash
+With imports if you request import doesnt work 
+```
+```bash
+open your venv/bin/activate
+```
+```bash
+then type: pip install requests
+```
+```bash
+this shows you its there: pip show request
+```
+```bash
+than run the file that you wanted to run
+```
