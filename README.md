@@ -131,3 +131,5 @@ this shows you its there: pip show request
 ```bash
 than run the file that you wanted to run
 ```
+## Acknowledgements:
+Thank you to Dr.Banerjee and Dr. Scarlato for in class and outside of class help
