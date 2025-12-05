@@ -1,4 +1,4 @@
-# UPDATED app.py WITH PRESCRIPTIONS DISPLAYED AND DASHBOARD REDIRECTS
+# ------------------- UPDATED app.py WITH PRESCRIPTIONS DISPLAYED AND DASHBOARD REDIRECTS -------------------
 
 import os
 import re
@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 from datetime import datetime
 from email_service import send_email
 
+# ------------------- SETUP -------------------
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_key")
@@ -30,6 +31,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "pdf", "txt"}
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
+# ------------------- HELPERS -------------------
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -39,6 +41,7 @@ def generate_unique_opid(prefix, collection):
         if not collection.find_one({"OPID": opid}):
             return opid
 
+# ------------------- INDEX -------------------
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -47,9 +50,10 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     doctor_list = [
-        {"_id": str(d["_id"]), "first_name": d.get("First Name", ""), "last_name": d.get("Last Name", ""), "opid": d.get("OPID", "")}
+        {"_id": str(d["_id"]), "first_name": d.get("First Name", ""), "last_name": d.get("Last Name", "")}
         for d in doctors.find()
     ]
+
     if request.method == "POST":
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
@@ -79,14 +83,9 @@ def register():
             "AssignedDoctorID": assigned_doctor_id
         })
 
+        # Send welcome email
         subject = "Your Account Has Been Created! :D"
-        message = (
-            f"Hello {first_name},\n\n"
-            f"Your patient account has been successfully created.\n"
-            f"OPID: {opid}\n"
-            f"Assigned Doctor: {doctor_name}\n\n"
-            f"Best regards,\nWell Together Team"
-        )
+        message = f"Hello {first_name},\n\nYour patient account has been successfully created.\nOPID: {opid}\nAssigned Doctor: {doctor_name}\n\nBest regards,\nWell Together Team"
         send_email(email, subject, message)
 
         return render_template(
@@ -111,26 +110,23 @@ def patient_login():
         session.clear()
         session["patient_id"] = str(patient["_id"])
         return redirect(url_for("patient_view", id=str(patient["_id"])))
+
     return render_template("PatientLogin.html")
 
 @app.route("/patients/<id>")
 def patient_view(id):
+    # Authorization checks
     if "patient_id" in session and session["patient_id"] == id:
         pass
     elif "doctor_id" in session:
         patient_doc = patients.find_one({"_id": ObjectId(id)})
-        if not patient_doc:
-            return "Patient not found", 404
-        assigned_doc_id = patient_doc.get("AssignedDoctorID")
-        if not assigned_doc_id or str(assigned_doc_id) != session["doctor_id"]:
+        if not patient_doc or str(patient_doc.get("AssignedDoctorID")) != session["doctor_id"]:
             return redirect(url_for("doctor_login"))
     elif "nurse_id" in session:
-        nurse = nurses.find_one({"_id": ObjectId(session["nurse_id"])} )
+        nurse = nurses.find_one({"_id": ObjectId(session["nurse_id"])})
         assigned_doctor_id = nurse.get("AssignedDoctorID") if nurse else None
         patient_doc = patients.find_one({"_id": ObjectId(id)})
-        if not patient_doc:
-            return "Patient not found", 404
-        if not assigned_doctor_id or str(patient_doc.get("AssignedDoctorID")) != str(assigned_doctor_id):
+        if not patient_doc or str(patient_doc.get("AssignedDoctorID")) != str(assigned_doctor_id):
             return redirect(url_for("nurse_login"))
     else:
         return redirect(url_for("patient_login"))
@@ -139,10 +135,15 @@ def patient_view(id):
     if not patient:
         return "Patient not found", 404
 
-    patient_data = {"first_name": patient.get("First Name", ""), "last_name": patient.get("Last Name", "")}
+    # Basic patient info
+    patient_data = {
+        "first_name": patient.get("First Name", ""),
+        "last_name": patient.get("Last Name", "")
+    }
     assigned_doctor = doctors.find_one({"_id": patient.get("AssignedDoctorID")})
     patient_data["assigned_doctor_name"] = f"Dr. {assigned_doctor['First Name']} {assigned_doctor['Last Name']}" if assigned_doctor else "Not assigned"
 
+    # Fetch records and prescriptions separately
     patient_records = []
     patient_prescriptions = []
     for rec in records.find({"patient_id": ObjectId(id)}):
@@ -207,10 +208,12 @@ def doctor_view(id):
 
     doctor_data = {"first_name": doctor.get("First Name", ""), "last_name": doctor.get("Last Name", "")}
 
+    # Fetch assigned patients along with prescriptions
     assigned_patients = []
     for p in patients.find({"AssignedDoctorID": ObjectId(id)}):
         patient_id = p["_id"]
         doc = doctors.find_one({"_id": p.get("AssignedDoctorID")})
+        # Prescriptions only
         prescriptions = list(records.find({"patient_id": patient_id, "type": "prescription"}))
         assigned_patients.append({
             "_id": str(patient_id),
@@ -341,7 +344,8 @@ def add_record(patient_id):
                 new_record["file_url"] = f"/uploads/{filename}"
 
         records.insert_one(new_record)
-        # Redirect back to doctor dashboard if doctor added
+
+        # Redirect to appropriate dashboard after adding
         if role == "doctor":
             return redirect(url_for("doctor_view", id=session.get("doctor_id")))
         else:
@@ -373,10 +377,12 @@ def write_prescription(patient_id):
             "type": "prescription"
         }
         records.insert_one(new_record)
+        # Redirect to doctor dashboard after writing prescription
         return redirect(url_for("doctor_view", id=session.get("doctor_id")))
 
     return render_template("write_prescription.html", patient=patient)
 
+# ------------------- UPLOADS -------------------
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
@@ -387,5 +393,6 @@ def logout():
     session.clear()
     return redirect(url_for("index"))
 
+# ------------------- RUN APP -------------------
 if __name__ == "__main__":
     app.run(debug=True)

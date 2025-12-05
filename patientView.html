@@ -17,58 +17,64 @@
         </form>
     </div>
 
-    <div id="records" class="records">
-        <h2>Your Medical Records</h2>
+    <!-- PRESCRIPTIONS SECTION -->
+<div id="records" class="records">
+    <h2>Your Medical Records</h2>
 
-        {% if records and records|length > 0 %}
-        <table>
-            <tr>
-                <th>Date</th>
-                <th>Added By</th>
-                <th>Blood Pressure</th>
-                <th>Heart Rate</th>
-                <th>Temperature</th>
-                <th>Notes</th>
-                <th>File</th>     <!-- NEW COLUMN -->
-            </tr>
+    {% if records and records|length > 0 %}
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Added By</th>
+            <th>Blood Pressure</th>
+            <th>Heart Rate</th>
+            <th>Temperature</th>
+            <th>Notes</th>
+            <th>File</th>
+        </tr>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.date }}</td>
+            <td>{{ record.doctor_name }}</td>
+            <td>{{ record.blood_pressure }}</td>
+            <td>{{ record.heart_rate }}</td>
+            <td>{{ record.temperature }}</td>
+            <td>{{ record.notes }}</td>
+            <td>
+                {% if record.file_url %}
+                <a href="{{ record.file_url }}" target="_blank">View File</a>
+                {% else %}
+                No file
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No medical records found yet.</p>
+    {% endif %}
+</div>
 
-            {% for record in records %}
-            <tr>
-                <td>{{ record['date'] }}</td>
+<!-- PRESCRIPTIONS -->
+<div id="prescriptions" class="records">
+    <h2>Your Prescriptions</h2>
 
-                <td>
-                    {% if record['doctor_name'] is mapping %}
-                        {{ record['doctor_name']['name'] }}
-                        {% if record['doctor_name']['role'] %}
-                            ({{ record['doctor_name']['role'].capitalize() }})
-                        {% endif %}
-                    {% else %}
-                        {{ record['doctor_name'] }}
-                    {% endif %}
-                </td>
-
-                <td>{{ record['blood_pressure'] }}</td>
-                <td>{{ record['heart_rate'] }}</td>
-                <td>{{ record['temperature'] }}</td>
-                <td>{{ record['notes'] }}</td>
-
-                <!-- NEW: File download / preview -->
-                <td>
-                    {% if record.file_url %}
-                        <a href="{{ record.file_url }}" target="_blank">
-                            View File
-                        </a>
-                    {% else %}
-                        No file
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-
-        {% else %}
-        <p>No records found yet. Please check back later.</p>
-        {% endif %}
-    </div>
-</body>
-</html>
+    {% if prescriptions and prescriptions|length > 0 %}
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Prescribed By</th>
+            <th>Prescription Details</th>
+        </tr>
+        {% for p in prescriptions %}
+        <tr>
+            <td>{{ p.date }}</td>
+            <td>{{ p.added_by }}</td>
+            <td>{{ p.prescription }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>No prescriptions found yet.</p>
+    {% endif %}
+</div>
