@@ -1,4 +1,4 @@
-# ------------------- UPDATED app.py WITH PRESCRIPTIONS DISPLAYED AND DASHBOARD REDIRECTS -------------------
+# ------------------- UPDATED app.py WITH NURSE VIEW FILTERED FOR DR. BROWN SMITH -------------------
 
 import os
 import re
@@ -53,7 +53,6 @@ def register():
         {"_id": str(d["_id"]), "first_name": d.get("First Name", ""), "last_name": d.get("Last Name", "")}
         for d in doctors.find()
     ]
-
     if request.method == "POST":
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
@@ -135,7 +134,6 @@ def patient_view(id):
     if not patient:
         return "Patient not found", 404
 
-    # Basic patient info
     patient_data = {
         "first_name": patient.get("First Name", ""),
         "last_name": patient.get("Last Name", "")
@@ -208,12 +206,10 @@ def doctor_view(id):
 
     doctor_data = {"first_name": doctor.get("First Name", ""), "last_name": doctor.get("Last Name", "")}
 
-    # Fetch assigned patients along with prescriptions
     assigned_patients = []
     for p in patients.find({"AssignedDoctorID": ObjectId(id)}):
         patient_id = p["_id"]
         doc = doctors.find_one({"_id": p.get("AssignedDoctorID")})
-        # Prescriptions only
         prescriptions = list(records.find({"patient_id": patient_id, "type": "prescription"}))
         assigned_patients.append({
             "_id": str(patient_id),
@@ -270,6 +266,7 @@ def nurse_login():
 
 @app.route("/nurses/<id>")
 def nurse_view(id):
+    """Updated nurse view: only shows patients assigned to Dr. Brown Smith"""
     if "nurse_id" not in session or session["nurse_id"] != str(id):
         return redirect(url_for("nurse_login"))
 
@@ -278,17 +275,18 @@ def nurse_view(id):
         return "Nurse Not Found", 404
 
     nurse_data = {"first_name": nurse.get("First Name", ""), "last_name": nurse.get("Last Name", "")}
-    assigned_doctor = nurse.get("AssignedDoctorID")
+
+    # Find Dr. Brown Smith
+    doctor = doctors.find_one({"First Name": "Brown", "Last Name": "Smith"})
     patients_list = []
-    if assigned_doctor:
-        for p in patients.find({"AssignedDoctorID": ObjectId(assigned_doctor)}):
-            doc = doctors.find_one({"_id": p.get("AssignedDoctorID")})
+    if doctor:
+        for p in patients.find({"AssignedDoctorID": doctor["_id"]}):
             patients_list.append({
                 "_id": str(p["_id"]),
                 "First Name": p.get("First Name", ""),
                 "Last Name": p.get("Last Name", ""),
                 "OPID": p.get("OPID", ""),
-                "doctor_name": f"Dr. {doc['First Name']} {doc['Last Name']}" if doc else "Not assigned"
+                "doctor_name": f"Dr. {doctor['First Name']} {doctor['Last Name']}"
             })
 
     return render_template("NursesView.html", nurse=nurse_data, patients=patients_list)
@@ -345,7 +343,6 @@ def add_record(patient_id):
 
         records.insert_one(new_record)
 
-        # Redirect to appropriate dashboard after adding
         if role == "doctor":
             return redirect(url_for("doctor_view", id=session.get("doctor_id")))
         else:
@@ -377,7 +374,6 @@ def write_prescription(patient_id):
             "type": "prescription"
         }
         records.insert_one(new_record)
-        # Redirect to doctor dashboard after writing prescription
         return redirect(url_for("doctor_view", id=session.get("doctor_id")))
 
     return render_template("write_prescription.html", patient=patient)
