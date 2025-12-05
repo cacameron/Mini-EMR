@@ -1,4 +1,4 @@
-# ------------------- UPDATED app.py WITH NURSE VIEW FILTERED FOR DR. BROWN SMITH -------------------
+# -------------------  app.py  -------------------
 
 import os
 import re
@@ -392,3 +392,4 @@ def logout():
 # ------------------- RUN APP -------------------
 if __name__ == "__main__":
     app.run(debug=True)
+
