@@ -122,15 +122,16 @@
             <td>{{ patient['doctor_name'] }}</td>
 
             <!-- Actions: Add/View Records or Write Prescription -->
-            <td>
-                <a class="dashboard-link" href="{{ url_for('add_record', patient_id=patient['_id']) }}">
-                    View/Add Record
-                </a>
-                <br>
-                <a class="dashboard-link" href="{{ url_for('write_prescription', patient_id=patient['_id']) }}">
-                    Write Prescription
-                </a>
-            </td>
+<td>
+    <div class="button-group">
+        <a class="dashboard-link" href="{{ url_for('add_record', patient_id=patient['_id']) }}">
+            View/Add Record
+        </a>
+        <a class="dashboard-link" href="{{ url_for('write_prescription', patient_id=patient['_id']) }}">
+            Write Prescription
+        </a>
+    </div>
+</td>
 
             <!-- Prescriptions Column -->
             <td>
