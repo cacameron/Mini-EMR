@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Write Prescription</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #e8f0fe;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        width: 60%;
+        margin: 40px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        margin-top: 0;
+        color: #0056b3;
+        font-size: 26px;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 8px;
+        font-size: 16px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 180px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        resize: vertical;
+        font-size: 16px;
+    }
+
+    button {
+        background-color: #0056b3;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 15px;
+    }
+
+    button:hover {
+        background-color: #003d80;
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #0056b3;
+        font-weight: bold;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Write Prescription for {{ patient['First Name'] }} {{ patient['Last Name'] }}</h2>
+
+    <form method="POST">
+        <label for="prescription">Prescription Details</label>
+        <textarea name="prescription" id="prescription" placeholder="Enter medication, dosage, instructions..." required></textarea>
+
+        <button type="submit">Save Prescription</button>
+    </form>
+
+    <!-- Fixed back link -->
+    <a class="back-link" href="{{ url_for('doctor_view', id=session.get('doctor_id')) }}">← Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>
