@@ -114,7 +114,6 @@ def patient_login():
 
 @app.route("/patients/<id>")
 def patient_view(id):
-    # Authorization checks
     if "patient_id" in session and session["patient_id"] == id:
         pass
     elif "doctor_id" in session:
@@ -178,7 +177,7 @@ def doctor_register():
         return render_template("Doctor_register_success.html", first_name=first_name, last_name=last_name, opid=opid)
 
     return render_template("Doctor_register.html")
-#route for doctor to be able to login
+
 @app.route("/doctorlogin", methods=["GET", "POST"])
 def doctor_login():
     if request.method == "POST":
@@ -225,26 +224,44 @@ def doctor_view(id):
 # ------------------- NURSE REGISTER/LOGIN -------------------
 @app.route("/nurseregister", methods=["GET", "POST"])
 def nurse_register():
+    doctor_list = [
+        {"_id": str(d["_id"]), "first_name": d.get("First Name", ""), "last_name": d.get("Last Name", "")}
+        for d in doctors.find()
+    ]
+
     if request.method == "POST":
         first_name = request.form["first_name"]
         last_name = request.form["last_name"]
         email = request.form["email"].lower().strip()
         password = request.form["password"]
+        assigned_doctor_id = request.form.get("assigned_doctor_id")
 
         if nurses.find_one({"Email": re.compile(f'^{re.escape(email)}$', re.IGNORECASE)}):
-            return render_template("nurse_register.html", error="An account already exists with that email!")
+            return render_template("nurse_register.html", error="An account already exists with that email!", doctors=doctor_list)
 
         nid = generate_unique_opid("NR", nurses)
         hashed_pw = generate_password_hash(password)
+        assigned_doc_obj = ObjectId(assigned_doctor_id) if assigned_doctor_id else None
 
-        nurses.insert_one({"First Name": first_name, "Last Name": last_name, "Email": email, "NID": nid, "Password": hashed_pw})
+        nurses.insert_one({
+            "First Name": first_name,
+            "Last Name": last_name,
+            "Email": email,
+            "NID": nid,
+            "Password": hashed_pw,
+            "AssignedDoctorID": assigned_doc_obj
+        })
+
+        assigned_doc = doctors.find_one({"_id": assigned_doc_obj})
+        doctor_name = f"Dr. {assigned_doc.get('First Name')} {assigned_doc.get('Last Name')}" if assigned_doc else "Not assigned"
 
         subject = "Your Account Has Been Created! :D"
-        message = f"Hello {first_name},\n\nYour nurse account has been successfully created.\nNID: {nid}\n\nBest regards,\nWell Together Team"
+        message = f"Hello {first_name},\n\nYour nurse account has been successfully created.\nNID: {nid}\nAssigned Doctor: {doctor_name}\n\nBest regards,\nWell Together Team"
         send_email(email, subject, message)
 
         return render_template("nurse_register_success.html", first_name=first_name, last_name=last_name, opid=nid)
-    return render_template("nurse_register.html")
+
+    return render_template("nurse_register.html", doctors=doctor_list)
 
 @app.route("/nurselogin", methods=["GET", "POST"])
 def nurse_login():
@@ -266,8 +283,6 @@ def nurse_login():
 
 @app.route("/nurses/<id>")
 def nurse_view(id):
-    "shows patient assigned to dr. Smith so far working on fixing it so the "
-    "nurse is assigned to a doctor and shows patients of that doctor"
     if "nurse_id" not in session or session["nurse_id"] != str(id):
         return redirect(url_for("nurse_login"))
 
@@ -277,20 +292,23 @@ def nurse_view(id):
 
     nurse_data = {"first_name": nurse.get("First Name", ""), "last_name": nurse.get("Last Name", "")}
 
-    # Find Dr. Brown Smith
-    doctor = doctors.find_one({"First Name": "Brown", "Last Name": "Smith"})
+    assigned_doc_id = nurse.get("AssignedDoctorID")
     patients_list = []
-    if doctor:
-        for p in patients.find({"AssignedDoctorID": doctor["_id"]}):
+    doctor_name = "Not assigned"
+
+    if assigned_doc_id:
+        doctor = doctors.find_one({"_id": assigned_doc_id})
+        doctor_name = f"Dr. {doctor['First Name']} {doctor['Last Name']}" if doctor else "Not assigned"
+        for p in patients.find({"AssignedDoctorID": assigned_doc_id}):
             patients_list.append({
                 "_id": str(p["_id"]),
                 "First Name": p.get("First Name", ""),
                 "Last Name": p.get("Last Name", ""),
                 "OPID": p.get("OPID", ""),
-                "doctor_name": f"Dr. {doctor['First Name']} {doctor['Last Name']}"
+                "doctor_name": doctor_name
             })
 
-    return render_template("NursesView.html", nurse=nurse_data, patients=patients_list)
+    return render_template("NursesView.html", nurse=nurse_data, patients=patients_list, doctor_name=doctor_name)
 
 # ------------------- ADD RECORD -------------------
 @app.route("/add_record/<patient_id>", methods=["GET", "POST"])
