@@ -1,4 +1,4 @@
-# -------------------  app.py  -------------------
+# ------- app.py -------------------
 
 import os
 import re
@@ -178,7 +178,7 @@ def doctor_register():
         return render_template("Doctor_register_success.html", first_name=first_name, last_name=last_name, opid=opid)
 
     return render_template("Doctor_register.html")
-
+#route for doctor to be able to login
 @app.route("/doctorlogin", methods=["GET", "POST"])
 def doctor_login():
     if request.method == "POST":
@@ -266,7 +266,8 @@ def nurse_login():
 
 @app.route("/nurses/<id>")
 def nurse_view(id):
-    """Updated nurse view: only shows patients assigned to Dr. Brown Smith"""
+    "shows patient assigned to dr. Smith so far working on fixing it so the "
+    "nurse is assigned to a doctor and shows patients of that doctor"
     if "nurse_id" not in session or session["nurse_id"] != str(id):
         return redirect(url_for("nurse_login"))
 
@@ -326,7 +327,7 @@ def add_record(patient_id):
             "temperature": request.form["temperature"],
             "heart_rate": request.form["heart_rate"],
             "notes": request.form["notes"],
-            "date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "date": datetime.now().strftime("%d-%m-%y %H:%M"),
             "added_by": added_by,
             "role": role,
             "type": "record"
@@ -349,7 +350,7 @@ def add_record(patient_id):
             return redirect(url_for("nurse_view", id=session.get("nurse_id")))
 
     return render_template("add_record.html", patient=patient, records=existing_records,
-                           doctor_id=session.get("doctor_id"), nurse_id=session.get("nurse_id"))
+        doctor_id=session.get("doctor_id"), nurse_id=session.get("nurse_id"))
 
 # ------------------- WRITE PRESCRIPTION -------------------
 @app.route("/write_prescription/<patient_id>", methods=["GET", "POST"])
@@ -369,7 +370,7 @@ def write_prescription(patient_id):
         new_record = {
             "patient_id": ObjectId(patient_id),
             "prescription": prescription_text,
-            "date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "date": datetime.now().strftime("%d-%m-%y %H:%M"),
             "added_by": doctor_name,
             "type": "prescription"
         }
@@ -392,4 +393,3 @@ def logout():
 # ------------------- RUN APP -------------------
 if __name__ == "__main__":
     app.run(debug=True)
-
