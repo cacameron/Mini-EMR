@@ -325,13 +325,17 @@ def add_record(patient_id):
         if not assigned_doc_id or str(assigned_doc_id) != session["doctor_id"]:
             return redirect(url_for("doctor_login"))
         user = doctors.find_one({"_id": ObjectId(session["doctor_id"])})
+
         added_by = f"Dr. {user['First Name']} {user['Last Name']}"
         role = "doctor"
+
     else:
         nurse = nurses.find_one({"_id": ObjectId(session["nurse_id"])})
+
         nurse_assigned_doc = nurse.get("AssignedDoctorID") if nurse else None
         if not nurse_assigned_doc or str(assigned_doc_id) != str(nurse_assigned_doc):
             return redirect(url_for("nurse_login"))
+
         user = nurse
         added_by = f"Nurse {user['First Name']} {user['Last Name']}"
         role = "nurse"
@@ -339,6 +343,24 @@ def add_record(patient_id):
     existing_records = list(records.find({"patient_id": ObjectId(patient_id)}))
 
     if request.method == "POST":
+
+        # ----------------------------------------------------
+        # AUTO-GENERATE ENCOUNTER ID (NEW CODE STARTS HERE)
+        # ----------------------------------------------------
+        last_record = records.find_one(
+            sort=[("EncounterID_Number", -1)]
+        )
+
+        if last_record and "EncounterID_Number" in last_record:
+            next_num = last_record["EncounterID_Number"] + 1
+        else:
+            next_num = 1
+
+        encounter_id = f"ENC{next_num:06d}"
+        # ----------------------------------------------------
+        # NEW CODE ENDS HERE
+        # ----------------------------------------------------
+
         new_record = {
             "patient_id": ObjectId(patient_id),
             "blood_pressure": request.form["blood_pressure"],
@@ -348,7 +370,11 @@ def add_record(patient_id):
             "date": datetime.now().strftime("%d-%m-%y %H:%M"),
             "added_by": added_by,
             "role": role,
-            "type": "record"
+            "type": "record",
+
+            # ----- Store Encounter ID -----
+            "EncounterID": encounter_id,
+            "EncounterID_Number": next_num
         }
 
         if "file" in request.files:
@@ -367,8 +393,12 @@ def add_record(patient_id):
         else:
             return redirect(url_for("nurse_view", id=session.get("nurse_id")))
 
-    return render_template("add_record.html", patient=patient, records=existing_records,
-        doctor_id=session.get("doctor_id"), nurse_id=session.get("nurse_id"))
+    return render_template("add_record.html",
+                           patient=patient,
+                           records=existing_records,
+                           doctor_id=session.get("doctor_id"),
+                           nurse_id=session.get("nurse_id"))
+
 
 # ------------------- WRITE PRESCRIPTION -------------------
 @app.route("/write_prescription/<patient_id>", methods=["GET", "POST"])
