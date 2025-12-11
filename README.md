@@ -102,10 +102,10 @@ To get the program to pull up in the window:
 Once you click that it will take you into a webrowser on your computer
 ```
 ```bash
-  You will see the Patient and Dr login screen
+  You will see the Patient, Doctor and Nurse login screen
 ```
 ```bash
-  Sign in to the according one and view the records
+  Sign in to the according one to view the records and information
 ```
 
 
@@ -120,16 +120,16 @@ Running with api for Scheduling
 With imports if you request import doesnt work 
 ```
 ```bash
-open your venv/bin/activate
+Open your venv/bin/activate
 ```
 ```bash
-then type: pip install requests
+Then type: pip install requests
 ```
 ```bash
-this shows you its there: pip show request
+This shows you its there: pip show request
 ```
 ```bash
-than run the file that you wanted to run
+Than run the file that you wanted to run
 ```
 ## Acknowledgements:
 Thank you to Dr.Banerjee and Dr. Scarlato for in class and outside of class help
